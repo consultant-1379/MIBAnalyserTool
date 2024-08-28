@@ -1,0 +1,1 @@
+start javaw -Xmx1024m -Xms128m -jar MAT.jar

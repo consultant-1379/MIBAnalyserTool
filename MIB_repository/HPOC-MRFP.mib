@@ -1,0 +1,3701 @@
+MRFP-MIB	DEFINITIONS ::= BEGIN
+-- Hewlett Packard Company
+-- HP Extensible MIB Definition for the mrfpModule Platform SNMP Agent
+-- June-2010
+-- MRFP MIB Version 1.3
+
+	IMPORTS
+		enterprises, MODULE-IDENTITY, OBJECT-TYPE, NOTIFICATION-TYPE,
+		Counter32, Counter64
+			FROM SNMPv2-SMI
+		DisplayString, StorageType, TEXTUAL-CONVENTION
+			FROM SNMPv2-TC
+		openCall,
+		ocEventTraps,
+		HpocEventType, HpocPerceivedSeverity, HpocProbableCause,
+		perceivedSeverity,
+		eventTime,
+		trendIndication,
+		notificationIdentifier,
+		eventType,
+		otherEventType,
+		additionalInformation,
+		probableCause,
+		proposedRepairActions,
+		correlatedNotifications,
+		additionalText,
+		managedObject,
+		i18NAlarmText
+			FROM HP-OPENCALL-EVENT-MIB;
+
+
+mrfp	MODULE-IDENTITY
+LAST-UPDATED	"201004231251Z"
+ORGANIZATION	"Hewlett Packard Company, Communication & Media Solutions "
+CONTACT-INFO	"email:cpe_ocmp@hp.com"
+DESCRIPTION     "The HP private SNMP MIB module for management of the OpenCall MRFP platform.
+   Copyright 2010 Hewlett-Packard Development Company, L.P."
+REVISION	    "201004231251Z"
+DESCRIPTION	"Updated version including additional conference context counts and RTP statistics counts."
+::=     {       media     1
+         }
+
+
+hp      OBJECT IDENTIFIER
+::=     {       enterprises      11
+        }
+
+nm      OBJECT IDENTIFIER
+::=     {       hp      2
+        }
+
+inNetElem      OBJECT IDENTIFIER
+::=     {       nm      29
+        }
+
+openCall      OBJECT IDENTIFIER
+::=     {       inNetElem      2
+        }
+
+media      OBJECT IDENTIFIER
+::=     {       openCall      7
+        }
+
+logic     OBJECT IDENTIFIER
+::=	{	mrfp	2
+	}
+
+stack     OBJECT IDENTIFIER
+::=	{	mrfp	3
+	}
+
+packages     OBJECT IDENTIFIER
+::=	{	mrfp	4
+	}
+
+connectionModel     OBJECT IDENTIFIER
+::=	{	logic	1
+	}
+
+status     OBJECT IDENTIFIER
+::=	{	logic	2
+	}
+
+eventBroker     OBJECT IDENTIFIER
+::=	{	logic	3
+	}
+
+mediaBroker     OBJECT IDENTIFIER
+::=	{	logic	4
+	}
+
+mrfcBroker     OBJECT IDENTIFIER
+::=	{	logic	5
+	}
+
+configuration     OBJECT IDENTIFIER
+::=	{	logic	6
+	}
+
+sdspceBroker     OBJECT IDENTIFIER
+::=	{	logic	7
+	}
+
+
+-- ======================================================================================================================================
+-- MIB Structure
+-- ======================================================================================================================================
+-- .1.3.6.1.4.1
+--            hp .11
+--                 nm .2
+--                     inNetElem .29
+--                                 openCall .2
+--                                           media .7
+--                                                  mrfp .1
+--                                                        notificationGroup .1
+--                                                        logic .2
+--                                                               connectionModel .1
+--                                                                                descriptors .1, messages .2,...
+--                                                               status .2
+--                                                                                mrfpLocalEntity .1, licensing .2, ...
+--                                                               eventBroker .3
+--                                                               mediaBroker .4
+--                                                                                mediaBrokerStats .1, rtpResourceGroup .2, rtpStats .3
+--                                                               mrfcBroker .5
+--                                                               configuration .6
+--                                                               sdspceBroker .7
+--                                                        stack .3
+--                                                        packages .4
+-- =====================================================================================================================================
+
+
+-- =====================================================================================================================================
+-- CONNECTION MODEL statistics section : mrfp.2.1
+-- =====================================================================================================================================
+
+
+cnxModelDesc	OBJECT IDENTIFIER
+::=	{	connectionModel	  1
+	}
+
+
+cnxModelNInEventDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming Event descriptors"
+::=	{	cnxModelDesc	1
+	}
+
+cnxModelNInDigitMapDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming DigitMap descriptors"
+::=	{	cnxModelDesc	2
+	}
+
+cnxModelNInSignalMapDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming SignalMap descriptors"
+::=	{	cnxModelDesc	3
+	}
+
+cnxModelNInMediaDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming Media descriptors"
+::=	{	cnxModelDesc	4
+	}
+
+cnxModelNInStreamDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming Stream descriptors"
+::=	{	cnxModelDesc	5
+	}
+
+cnxModelNInLclCtrlDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming LocalControl descriptors"
+::=	{	cnxModelDesc	6
+	}
+
+cnxModelNInTerminationStateDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming TerminationState descriptors"
+::=	{	cnxModelDesc	7
+	}
+
+cnxModelNInServiceChangeDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming ServiceChange descriptors"
+::=	{	cnxModelDesc	8
+	}
+
+cnxModelNInServiceChangeRespDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming ServiceChange response descriptors"
+::=	{	cnxModelDesc	9
+	}
+
+cnxModelNInAuditCapabilityDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming AuditCapability descriptors"
+::=	{	cnxModelDesc	10
+	}
+
+cnxModelNInAuditCapabilityRespDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming AuditCapability response descriptors"
+::=	{	cnxModelDesc	11
+	}
+
+cnxModelNInAuditValueDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming AuditValue descriptors"
+::=	{	cnxModelDesc	12
+	}
+
+cnxModelNInAuditValueRespDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming AuditValue response descriptors"
+::=	{	cnxModelDesc	13
+	}
+
+cnxModelNInEventBufDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming EventBuffer descriptors"
+::=	{	cnxModelDesc	14
+	}
+
+cnxModelNInAuditStatisticDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming AuditStatistics descriptors"
+::=	{	cnxModelDesc	15
+	}
+
+cnxModelNInErrorDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming Error descriptors"
+::=	{	cnxModelDesc	16
+	}
+
+cnxModelNInModemDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming Modem descriptors"
+::=	{	cnxModelDesc	17
+	}
+
+cnxModelNInMuxDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming Multiplex descriptors"
+::=	{	cnxModelDesc	18
+	}
+
+cnxModelNInTopologyDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming Topology descriptors"
+::=	{	cnxModelDesc	19
+	}
+
+cnxModelNInObservedEventDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming ObservedEvent descriptors"
+::=	{	cnxModelDesc	20
+	}
+
+cnxModelNInContextTermAudDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming Audit descriptors"
+::=	{	cnxModelDesc	21
+	}
+
+cnxModelNOutEventDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing Event descriptors"
+::=	{	cnxModelDesc	22
+	}
+
+cnxModelNOutDigitMapDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing DigitMap descriptors"
+::=	{	cnxModelDesc	23
+	}
+
+cnxModelNOutSignalMapDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing SignalMap descriptors"
+::=	{	cnxModelDesc	24
+	}
+
+cnxModelNOutMediaDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing Media descriptors"
+::=	{	cnxModelDesc	25
+	}
+
+cnxModelNOutStreamDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of ougoing Stream descriptors"
+::=	{	cnxModelDesc	26
+	}
+
+cnxModelNOutLclCtrlDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing LocalControl descriptors"
+::=	{	cnxModelDesc	27
+	}
+
+cnxModelNOutTerminationStateDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing TerminationState descriptors"
+::=	{	cnxModelDesc	28
+	}
+
+cnxModelNOutServiceChangeDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing ServiceChange descriptors"
+::=	{	cnxModelDesc	29
+	}
+
+cnxModelNOutServiceChangeRespDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing ServiceChange descriptors"
+::=	{	cnxModelDesc	30
+	}
+
+cnxModelNOutAuditCapabilityDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing AuditCapability descriptors"
+::=	{	cnxModelDesc	31
+	}
+
+cnxModelNOutAuditCapabilityRespDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing AuditCapability response descriptors"
+::=	{	cnxModelDesc	32
+	}
+
+cnxModelNOutAuditValueDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing AuditValue descriptors"
+::=	{	cnxModelDesc	33
+	}
+
+cnxModelNOutAuditValueRespDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing AuditValue response descriptors"
+::=	{	cnxModelDesc	34
+	}
+
+cnxModelNOutEventBufDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing EventBuffer descriptors"
+::=	{	cnxModelDesc	35
+	}
+
+cnxModelNOutAuditStatisticDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing AuditStatistics descriptors"
+::=	{	cnxModelDesc	36
+	}
+
+cnxModelNOutErrorDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing Error descriptors"
+::=	{	cnxModelDesc	37
+	}
+
+cnxModelNOutModemDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing Modem descriptors"
+::=	{	cnxModelDesc	38
+	}
+
+cnxModelNOutMuxDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing Multiplex descriptors"
+::=	{	cnxModelDesc	39
+	}
+
+cnxModelNOutTopologyDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing Topology descriptors"
+::=	{	cnxModelDesc	40
+	}
+
+cnxModelNOutObservedEventDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing ObservedEvent descriptors"
+::=	{	cnxModelDesc	41
+	}
+
+cnxModelNOutContextTermAudDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing audit descriptors"
+::=	{	cnxModelDesc	42
+	}
+
+cnxModelMsg	OBJECT IDENTIFIER
+::=	{	connectionModel	    2
+	}
+
+cnxModelNInAddReqMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming Add request operations"
+::=	{	cnxModelMsg	1
+	}
+
+cnxModelNInModifyReqMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming Modify request operations"
+::=	{	cnxModelMsg	2
+	}
+
+cnxModelNInMoveReqMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming Move request operations"
+::=	{	cnxModelMsg	3
+	}
+
+cnxModelNInServiceChangeReqMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming ServiceChange request operations"
+::=	{	cnxModelMsg	4
+	}
+
+cnxModelNInNotifyReqMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming Notify request operations"
+::=	{	cnxModelMsg	5
+	}
+
+cnxModelNInAuditValueReqMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming AuditValue request operations"
+::=	{	cnxModelMsg	6
+	}
+
+cnxModelNInAuditCapabilityReqMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming AuditCapability request operations"
+::=	{	cnxModelMsg	7
+	}
+
+cnxModelNInSubstractReqMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming Substract request operations"
+::=	{	cnxModelMsg	8
+	}
+
+cnxModelNInAddRespMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming Add response operations"
+::=	{	cnxModelMsg	9
+	}
+
+cnxModelNInModifyRespMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming Modify response operations"
+::=	{	cnxModelMsg	10
+	}
+
+cnxModelNInMoveRespMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming Move response operations"
+::=	{	cnxModelMsg	11
+	}
+
+cnxModelNInServiceChangeRespMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming ServiceChange response operations"
+::=	{	cnxModelMsg	12
+	}
+
+cnxModelNInNotifyRespMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming Notify response operations"
+::=	{	cnxModelMsg	13
+	}
+
+cnxModelNInAuditValueRespMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming AuditValue response operations"
+::=	{	cnxModelMsg	14
+	}
+
+cnxModelNInAuditCapabilityRespMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming AuditCapability response operations"
+::=	{	cnxModelMsg	15
+	}
+
+cnxModelNInSubstractRespMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming Substract response operations"
+::=	{	cnxModelMsg	16
+	}
+
+cnxModelNOutAddReqMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing Add request operations"
+::=	{	cnxModelMsg	17
+	}
+
+cnxModelNOutModifyReqMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing Modify request operations"
+::=	{	cnxModelMsg	18
+	}
+
+cnxModelNOutMoveReqMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing Move request operations"
+::=	{	cnxModelMsg	19
+	}
+
+cnxModelNOutServiceChangeReqMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing ServiceChange request operations"
+::=	{	cnxModelMsg	20
+	}
+
+cnxModelNOutNotifyReqMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing Notify request operations"
+::=	{	cnxModelMsg	21
+	}
+
+cnxModelNOutAuditValueReqMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing AuditValue request operations"
+::=	{	cnxModelMsg	22
+	}
+
+cnxModelNOutAuditCapabilityReqMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing AuditCapability request operations"
+::=	{	cnxModelMsg	23
+	}
+
+cnxModelNOutSubstractReqMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing Substract request operations"
+::=	{	cnxModelMsg	24
+	}
+
+cnxModelNOutAddRespMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing Add response operations"
+::=	{	cnxModelMsg	25
+	}
+
+cnxModelNOutModifyRespMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing Modify response operations"
+::=	{	cnxModelMsg	26
+	}
+
+cnxModelNOutMoveRespMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing Move response operations"
+::=	{	cnxModelMsg	27
+	}
+
+cnxModelNOutServiceChangeRespMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing ServiceChange response operations"
+::=	{	cnxModelMsg	28
+	}
+
+cnxModelNOutNotifyRespMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing Notify response operations"
+::=	{	cnxModelMsg	29
+	}
+
+cnxModelNOutAuditValueRespMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing AuditValue response operations"
+::=	{	cnxModelMsg	30
+	}
+
+cnxModelNOutAuditCapabilityRespMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing AuditCapability response operations"
+::=	{	cnxModelMsg	31
+	}
+
+cnxModelNOutSubstractRespMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing Substract response operations"
+::=	{	cnxModelMsg	32
+	}
+
+cnxModelTotal	OBJECT IDENTIFIER
+::=	{	connectionModel	3
+	}
+
+cnxModelNInTotalDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-write
+STATUS	current
+DESCRIPTION	 "Number of incoming descriptors"
+::=	{	cnxModelTotal	1
+	}
+
+cnxModelNOutTotalDesc	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing descriptors"
+::=	{	cnxModelTotal	2
+	}
+
+cnxModelNInTotalReqMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-write
+STATUS	current
+DESCRIPTION	 "Number of incoming request messages (Add, Substract, Modify, Move, AuditValue, AuditCapability, ServiceChange, Notify)"
+::=	{	cnxModelTotal	3
+	}
+
+cnxModelNInTotalRespMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming response messages"
+::=	{	cnxModelTotal	4
+	}
+
+cnxModelNOutTotalReqMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing total request messages (Add, Substract, Modify, Move, AuditValue, AuditCapability, ServiceChange, Notify)"
+::=	{	cnxModelTotal	5
+	}
+
+cnxModelNOutTotalRespMsg	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing total response messages"
+::=	{	cnxModelTotal	6
+	}
+
+cnxModelNCreatedTerminations	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of total created terminations"
+::=	{	cnxModelTotal	7
+	}
+
+cnxModelNDestroyedTerminations	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of total destroyed terminations"
+::=	{	cnxModelTotal	8
+	}
+
+cnxModelNCreatedContexts	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of total created contexts"
+::=	{	cnxModelTotal	9
+	}
+
+cnxModelNDestroyedContexts	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of total destroyed contexts"
+::=	{	cnxModelTotal	10
+	}
+
+cnxModelNTermTypeWildcardReq	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of total termination requests whose type is WILDCARD"
+::=	{	cnxModelTotal	11
+	}
+
+cnxModelNTermTypeWildcardResp	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of total termination responses whose type is WILDCARD"
+::=	{	cnxModelTotal	12
+	}
+
+cnxModelIntervalDuration	OBJECT-TYPE
+SYNTAX	Counter32
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Duration in minutes of the statistics capture interval. 
+This parameter is a platform tunable, displayed in the MIB for statistics analysis convenience.
+Note: the first statistics capture interval starts when the MRFP node starts."
+::=	{	connectionModel	4
+	}
+	
+cnxModelIntervalMeanSamplingPeriod	OBJECT-TYPE
+SYNTAX	Counter32
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Sampling period in second for the computation of statistics MEAN values on given capture interval. 
+This parameter is a platform tunable, displayed in the MIB for statistics analysis convenience.
+The sampling period value must be higher than the minimum sampling period supported by the platform and smaller than the cnxModelIntervalDuration."
+::=	{	connectionModel	5
+	} 	
+	
+--	
+-- The statistics of the cnxModelLatestInterval are computed and published at the end of the statistics capture interval.
+-- Note: the first statistics capture interval starts when the MRFP node starts.
+--
+cnxModelLatestInterval	OBJECT IDENTIFIER
+::=	{	connectionModel	6
+	}
+
+cnxModelLatestIntervalBeginningTimeStamp	OBJECT-TYPE
+SYNTAX	 Counter64 
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Beginning time stamp of the latest statistics capture interval: number of milliseconds elapsed since 00:00:00 UTC, 1 Jan 1970."
+::=	{	cnxModelLatestInterval	1
+	}
+
+cnxModelLatestIntervalNMultiMediaConfCtxCreated	OBJECT-TYPE
+SYNTAX	 Counter32
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Total number of created multimedia conferences context (both audio and A/V context with 3 or more participants) during the latest interval.  "
+::=	{	cnxModelLatestInterval	2
+	}
+	
+cnxModelLatestIntervalNMultiMediaConfCtxMax	OBJECT-TYPE
+SYNTAX	 Counter32
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Maximum number of simultaneous multimedia conferences context (both audio and A/V context with 3 or more participants) during the latest interval.  "
+::=	{	cnxModelLatestInterval	3
+	}	
+	
+cnxModelLatestIntervalNMultiMediaConfCtxMaxTimeStamp	OBJECT-TYPE
+SYNTAX	 Counter64 
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "TimeStamp associated to the maximum number of simultaneous multimedia conferences context (both audio and A/V context with 3 or more participants) during the latest interval.  
+This TimeStamp is a number of milliseconds elapsed since 00:00:00 UTC, 1 Jan 1970"
+::=	{	cnxModelLatestInterval	4
+	}
+	
+cnxModelLatestIntervalNMultiMediaConfCtxMean	OBJECT-TYPE
+SYNTAX	 Counter32
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Mean number of multimedia conferences context (both audio and A/V context with 3 or more participants) during the latest interval.  "
+::=	{	cnxModelLatestInterval	5
+	}	
+	
+cnxModelLatestIntervalNAudioTranscodCtxCreated	OBJECT-TYPE
+SYNTAX	 Counter32
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Total number of created audio transcoding context (audio context with 2 participants) during the latest interval.  "
+::=	{	cnxModelLatestInterval	6
+	}
+	
+cnxModelLatestIntervalNAudioTranscodCtxMax	OBJECT-TYPE
+SYNTAX	 Counter32
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Maximum number of simultaneous audio transcoding context (audio context with 2 participants) during the latest interval.  "
+::=	{	cnxModelLatestInterval	7
+	}	
+	
+cnxModelLatestIntervalNAudioTranscodCtxMaxTimeStamp	OBJECT-TYPE
+SYNTAX	 Counter64 
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "TimeStamp associated to the maximum number of simultaneous audio transcoding context (audio context with 2 participants) during the latest interval.  
+This TimeStamp is a number of milliseconds elapsed since 00:00:00 UTC, 1 Jan 1970"
+::=	{	cnxModelLatestInterval	8
+	}
+	
+cnxModelLatestIntervalNAudioTranscodCtxMean	OBJECT-TYPE
+SYNTAX	 Counter32
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Mean number of audio transcoding context (audio context with 2 participants) during the latest interval.  "
+::=	{	cnxModelLatestInterval	9
+	}	
+
+cnxModelLatestIntervalNAudioConfCtxCreated	OBJECT-TYPE
+SYNTAX	 Counter32
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Total number of created audio conferences context (audio context with 3 or more participants) during the latest interval.  "
+::=	{	cnxModelLatestInterval	10
+	}
+	
+cnxModelLatestIntervalNAudioConfCtxMax	OBJECT-TYPE
+SYNTAX	 Counter32
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Maximum number of simultaneous audio conferences context (audio context with 3 or more participants) during the latest interval.  "
+::=	{	cnxModelLatestInterval	11
+	}	
+	
+cnxModelLatestIntervalNAudioConfCtxMaxTimeStamp	OBJECT-TYPE
+SYNTAX	 Counter64 
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "TimeStamp associated to the maximum number of simultaneous audio conferences context (audio context with 3 or more participants) during the latest interval.  
+This TimeStamp is a number of milliseconds elapsed since 00:00:00 UTC, 1 Jan 1970"
+::=	{	cnxModelLatestInterval	12
+	}
+	
+cnxModelLatestIntervalNAudioConfCtxMean	OBJECT-TYPE
+SYNTAX	 Counter32
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Mean number of audio conferences context (audio context with 3 or more participants) during the latest interval.  "
+::=	{	cnxModelLatestInterval	13
+	}	
+
+cnxModelLatestIntervalNVideoEncodeCreated	OBJECT-TYPE
+SYNTAX	 Counter32
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Total number of terminations using video encoding resources created during the latest interval.  "
+::=	{	cnxModelLatestInterval	14
+	}
+	
+cnxModelLatestIntervalNVideoEncodeMax	OBJECT-TYPE
+SYNTAX	 Counter32
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Maximum number of simultaneous terminations using video encoding resources during the latest interval.  "
+::=	{	cnxModelLatestInterval	15
+	}	
+	
+cnxModelLatestIntervalNVideoEncodeMaxTimeStamp	OBJECT-TYPE
+SYNTAX	 Counter64 
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "TimeStamp associated to the maximum number of simultaneous terminations using video encoding resources during the latest interval.  
+This TimeStamp is a number of milliseconds elapsed since 00:00:00 UTC, 1 Jan 1970"
+::=	{	cnxModelLatestInterval	16
+	}
+	
+cnxModelLatestIntervalNVideoEncodeMean	OBJECT-TYPE
+SYNTAX	 Counter32
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Mean number of terminations using video encoding resources during the latest interval.  "
+::=	{	cnxModelLatestInterval	17
+	}	
+
+cnxModelLatestIntervalNVideoDecodeCreated	OBJECT-TYPE
+SYNTAX	 Counter32
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Total number of terminations using video decoding resources created during the latest interval.  "
+::=	{	cnxModelLatestInterval	18
+	}
+	
+cnxModelLatestIntervalNVideoDecodeMax	OBJECT-TYPE
+SYNTAX	 Counter32
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Maximum number of simultaneous terminations using video decoding resources during the latest interval.  "
+::=	{	cnxModelLatestInterval	19
+	}	
+	
+cnxModelLatestIntervalNVideoDecodeMaxTimeStamp	OBJECT-TYPE
+SYNTAX	 Counter64 
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "TimeStamp associated to the maximum number of simultaneous terminations using video decoding resources during the latest interval.  
+This TimeStamp is a number of milliseconds elapsed since 00:00:00 UTC, 1 Jan 1970"
+::=	{	cnxModelLatestInterval	20
+	}
+	
+cnxModelLatestIntervalNVideoDecodeMean	OBJECT-TYPE
+SYNTAX	 Counter32
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Mean number of terminations using video decoding resources during the latest interval.  "
+::=	{	cnxModelLatestInterval	21
+	}	
+
+		
+-- =====================================================================================================================================
+-- STATUS statistics section : mrfp.2.2
+-- =====================================================================================================================================
+
+SdspceConnectionState ::= TEXTUAL-CONVENTION
+	STATUS		current
+	DESCRIPTION
+		"Enum: Sdspce (HP Soft DSP conference Engine for video) different states
+	       - not-responding  : The Soft DSP conference Engine process is not answering
+               - up              : The Soft DSP conference Engine process is up and running
+               - down            : The Soft DSP conference Engine process has shut down
+               - invalid-license : The Soft DSP conference Engine's license file not present or invalid
+	       - stopping        : The Soft DSP conference Engine is stopping: a Gracefull shutdown (maintenance) has been triggered"
+	SYNTAX		INTEGER { not-responding(0), up(1), down(2), invalid-license(3), stopping(4) }
+
+SdspceOverloadState ::= TEXTUAL-CONVENTION
+	STATUS		current
+	DESCRIPTION
+		"Enum: Sdspce overload different states
+               - normal : normal Sdspce overload state
+               - high   : current Sdspce load is close to the limit
+               - hit    : current Sdspce load has reached the limit"
+	SYNTAX		INTEGER { normal(7), high(8), hit(9) }
+
+
+LicensingState ::= TEXTUAL-CONVENTION
+	STATUS		current
+	DESCRIPTION
+		"Enum: Mrfp Licensing different states
+               - normal : normal licensing state
+               - high   : current the number of RTP ports used are close to the license limit
+               - hit    : current the number of RTP ports used have reached the license limit"
+	SYNTAX		INTEGER { normal(0), high(1), hit(2) }
+
+
+OverloadState ::= TEXTUAL-CONVENTION
+	STATUS		current
+	DESCRIPTION
+		"Enum: Mrfp overload different states
+               - normal : normal Mrfp overload state
+               - high   : current Mrfp load is close to the limit
+               - hit    : current Mrfp load has reached the limit"
+	SYNTAX		INTEGER { normal(0), high(1), hit(2) }
+
+
+MrfcConnectionState ::= TEXTUAL-CONVENTION
+	STATUS		current
+	DESCRIPTION "Enum: Mrfp - Mrfc connection different states
+	           - unknown        : The Mrfp-Mrfc initial connection state
+               - off            : The Mrfp-Mrfc connection has been tore down (Mrfp shutdown)
+               - connecting     : The Mrfp is trying to connect to one of the configured Mrfc
+               - stopping       : The Mrfp is shutting down
+	           - handing-off    : The last active Mrfc has requested the Mrfp a hand-off to a another Mrfc
+	           - failed         : The Mrfp-Mrfc connection has an invalid conguration
+               - re-connecting  : The Mrfp has been disconnected and is trying to re-connect to a configured Mrfc"
+	SYNTAX		INTEGER { unknown(0), off(1), connecting(2), connected(3), stopping(4), handing-off(5), failed(6), re-connecting(7) }
+
+
+MrfcState ::= TEXTUAL-CONVENTION
+	STATUS		current
+	DESCRIPTION
+		"Enum: Mrfc different states
+	           - unknown     : The Mrfc has not exchanged any ServiceChange message yet
+               - handoff     : The Mrfc has retired (hand off)
+               - stopping    : The Mrfc is stopping: a Gracefull or a Forced shutdown has been triggered but the Mrfc timeout has not expired yet
+               - failed      : The Mrfc has been found failed, he will be the last re-used in case of a search for a new Mrfc to connect to
+	           - active      : The Mrfc is currently active
+	           - handing-off : The Mrfc has required a handoff"
+	SYNTAX		INTEGER { unknown(0), handoff(1), stopping(2), failed(3), active(4), handing-off(5) }
+
+
+mrfpLocalEntity 	OBJECT IDENTIFIER
+::=	{	status	1
+	}
+
+
+mrfpLocalEntityOldAssociationState        OBJECT-TYPE
+SYNTAX  MrfcConnectionState
+MAX-ACCESS      accessible-for-notify
+STATUS  current
+DESCRIPTION      "Mrfp old state"
+::=     {       mrfpLocalEntity       1
+        }
+
+mrfpLocalEntityNewAssociationState        OBJECT-TYPE
+SYNTAX  MrfcConnectionState
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Mrfp new state"
+::=     {       mrfpLocalEntity       2
+        }
+
+mrfpLocalEntityAddress 	OBJECT-TYPE
+SYNTAX  DisplayString
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Mrfp associated IP address and port"
+::=     {       mrfpLocalEntity       3
+        }
+
+mrfpLocalEntityTransportMode 	OBJECT-TYPE
+SYNTAX  DisplayString
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Mrfp transport mode used"
+::=     {       mrfpLocalEntity       4
+        }
+
+licensing	OBJECT IDENTIFIER
+::=	{	status	2
+	}
+
+licensingOldState	OBJECT-TYPE
+SYNTAX	LicensingState
+MAX-ACCESS	accessible-for-notify
+STATUS	current
+DESCRIPTION	 "Licensing old state"
+::=	{	licensing	1
+	}
+
+licensingNewState	OBJECT-TYPE
+SYNTAX	LicensingState
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Licensing new state"
+::=	{	licensing	2
+	}
+licensingRejectedTransactions	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of rejected transactions due to Mrfp licensing limit reached"
+::=	{	licensing	3
+	}
+
+qos	OBJECT IDENTIFIER
+::=	{	status	4
+	}
+
+mrfpOverloadOldState	OBJECT-TYPE
+SYNTAX	OverloadState
+MAX-ACCESS	accessible-for-notify
+STATUS	current
+DESCRIPTION	 "Mrfp QoS old state"
+::=	{	qos	1
+	}
+
+mrfpOverloadNewState	OBJECT-TYPE
+SYNTAX	OverloadState
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Mrfp QoS new state"
+::=	{	qos	2
+	}
+
+mrfpOverloadRejectedTransactions	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of rejected transactions due to Mrfp overload state"
+::=	{	qos	3
+	}
+
+-- ==========================
+-- ASR/TTS statistics section
+-- ==========================
+
+
+AsrTtsConnectionState ::= TEXTUAL-CONVENTION
+	STATUS		current
+	DESCRIPTION
+		"Enum: Mrfc-ASR/TTS server connection different states"
+	SYNTAX		INTEGER { up(0), down(1) }
+
+
+audioServiceServerTable    OBJECT-TYPE
+SYNTAX  SEQUENCE OF     AudioServiceServerEntry
+MAX-ACCESS      not-accessible
+STATUS  current
+DESCRIPTION     "A list of the ASR/TTS associated audio services"
+::=     {       status      5
+        }
+
+
+audioServiceServerEntry    OBJECT-TYPE
+SYNTAX  AudioServiceServerEntry
+MAX-ACCESS      not-accessible
+STATUS  current
+DESCRIPTION     "The entry for audioServiceServerTable"
+INDEX {  audioServiceServerName  }
+::=     {       audioServiceServerTable    1
+        }
+
+AudioServiceServerEntry    ::=  SEQUENCE   {
+                         audioServiceServerName DisplayString,
+                         audioServiceServerUri DisplayString,
+                         audioServiceServerOldState AsrTtsConnectionState,
+                         audioServiceServerNewState AsrTtsConnectionState
+}
+
+
+audioServiceServerName     OBJECT-TYPE
+SYNTAX  DisplayString
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Audio service associated server name"
+::=     {       audioServiceServerEntry    1
+        }
+
+audioServiceServerUri      OBJECT-TYPE
+SYNTAX  DisplayString
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Audio service associated server Uri"
+::=     {       audioServiceServerEntry    2
+        }
+
+
+audioServiceServerOldState        OBJECT-TYPE
+SYNTAX  AsrTtsConnectionState
+MAX-ACCESS      accessible-for-notify
+STATUS  current
+DESCRIPTION      "Audio service (ASR-TTS) old connection state"
+::=     {       audioServiceServerEntry       3
+        }
+
+
+audioServiceServerNewState        OBJECT-TYPE
+SYNTAX  AsrTtsConnectionState
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Audio service (ASR-TTS) new connection state"
+::=     {       audioServiceServerEntry       4
+        }
+
+-- =====================================================================================================================================
+-- EVENT statistics section : mrfp.2.3
+-- =====================================================================================================================================
+
+
+eventBrokerStats	OBJECT IDENTIFIER
+::=	{	eventBroker	1
+	}
+
+eventBrokerNNotifiedObservedEvent	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of notified observed events"
+::=	{	eventBrokerStats	1
+	}
+
+eventBrokerNDroppedObservedEvent	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of dropped observed events"
+::=	{	eventBrokerStats	2
+	}
+
+eventBrokerNBufferedObservedEvent	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of buffered observed events"
+::=	{	eventBrokerStats	3
+	}
+
+eventBrokerNFlushedObservedEvent	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of flushed observed events"
+::=	{	eventBrokerStats	4
+	}
+
+
+-- =====================================================================================================================================
+-- MEDIA statistics section : mrfp.2.4
+-- =====================================================================================================================================
+
+mediaBrokerStats	OBJECT IDENTIFIER
+::=	{	mediaBroker	1
+	}
+
+mediaBrokerNCreatedConferences	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of created conferences (BOTHWAYS topology)"
+::=	{	mediaBrokerStats	1
+	}
+
+mediaBrokerNDestroyedConferences	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of destroyed conferences (BOTHWAYS topology)"
+::=	{	mediaBrokerStats	2
+	}
+
+mediaBrokerNCreatedBridges	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of created bridges where there are three or more conference participants"
+::=	{	mediaBrokerStats	3
+	}
+
+mediaBrokerNDestroyedBridges	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of destroyed bridges"
+::=	{	mediaBrokerStats	4
+	}
+
+mediaBrokerNCreatedIsolatedMedias	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of created contexts with ISOLATE topology"
+::=	{	mediaBrokerStats	5
+	}
+
+mediaBrokerNDestroyedIsolatedMedias	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of destroyed contexts with ISOLATE topology"
+::=	{	mediaBrokerStats	6
+	}
+
+mediaBrokerNCreatedBroadcasts	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of contexts created with 1 to N topology"
+::=	{	mediaBrokerStats	7
+	}
+
+mediaBrokerNDestroyedBroadcasts	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of contexts destroyed with 1 to N topology"
+::=	{	mediaBrokerStats	8
+	}
+
+-- RTP Banks statistics
+
+rtpResourceGroup	OBJECT IDENTIFIER
+::=	{	mediaBroker	2
+	}
+
+rtpResourceGroupTable       OBJECT-TYPE
+SYNTAX  SEQUENCE OF     RtpResourceGroupEntry
+MAX-ACCESS      not-accessible
+STATUS  current
+DESCRIPTION     "A Table of RTP Banks indexed by the RTP Bank name"
+::=     {       rtpResourceGroup  1
+        }
+
+
+rtpResourceGroupEntry       OBJECT-TYPE
+SYNTAX  RtpResourceGroupEntry
+MAX-ACCESS      not-accessible
+STATUS  current
+DESCRIPTION     "The entry for RtpResourceGroupTable"
+INDEX {  rtpResourceGroupName  }
+::=     {       rtpResourceGroupTable  1
+        }
+
+RtpResourceGroupEntry ::=  SEQUENCE   { rtpResourceGroupName DisplayString,
+                                        rtpResourceGroupNumberOfBusyResource INTEGER,
+                                        rtpResourceGroupNumberOfFreeResource INTEGER
+}
+
+
+rtpResourceGroupName	OBJECT-TYPE
+SYNTAX	DisplayString
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "RTP bank name (identifier)"
+::=	{	rtpResourceGroupEntry	1
+	}
+
+
+rtpResourceGroupNumberOfBusyResource	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Current number of RTP ports used (busy sockets)"
+::=	{	rtpResourceGroupEntry	2
+	}
+
+rtpResourceGroupNumberOfFreeResource	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Current number of RTP ports unused (free sockets)"
+::=	{	rtpResourceGroupEntry	3
+	}
+
+-- RTP global statistics
+rtpStats	OBJECT IDENTIFIER
+::=	{	mediaBroker	3
+	}
+
+
+rtpStatsNInPackets	OBJECT-TYPE
+SYNTAX	Counter32
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming RTP packets"
+::=	{	rtpStats	1
+	}
+
+rtpStatsNOutPackets	OBJECT-TYPE
+SYNTAX	Counter32
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing RTP packets"
+::=	{	rtpStats	2
+	}
+
+rtpStatsNInLostPackets	OBJECT-TYPE
+SYNTAX	Counter32
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of lost incoming RTP packets"
+::=	{	rtpStats	3
+	}
+
+
+rtpStatsNInBytes	OBJECT-TYPE
+SYNTAX	Counter32
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of bytes of incoming RTP packets"
+::=	{	rtpStats	4
+	}
+
+rtpStatsNOutBytes	OBJECT-TYPE
+SYNTAX	Counter32
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of bytes of outgoing RTP packets"
+::=	{	rtpStats	5
+	}
+
+	
+rtpStatsIntervalDuration	OBJECT-TYPE
+SYNTAX	Counter32
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Duration in minutes of the statistics capture interval. 
+This parameter is a platform tunable, displayed in the MIB for statistics analysis convenience.
+Note: the first statistics capture interval starts when the MRFP node starts.
+The interval statistics are published at the end of the interval (rtpStatsLatestInterval statistics are not live growing counters)."
+::=	{	rtpStats	6
+	}
+	
+	
+--	
+-- The statistics of the rtpStatsLatestInterval are computed and published at the end of the statistics capture interval.
+-- Note: the first statistics capture interval starts when the MRFP node starts.
+-- The interval statistics are published at the end of the interval (rtpStatsLatestInterval statistics are not live growing counters).
+-- rtpStatsLatestIntervalXXX counters consolidate the statistics reported by all sessions that ended during the interval.
+--
+rtpStatsLatestInterval	OBJECT IDENTIFIER
+::=	{	rtpStats	7
+	}
+
+rtpStatsLatestIntervalBeginningTimeStamp	OBJECT-TYPE
+SYNTAX	 Counter64 
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Beginning timestamp of the latest statistics capture interval.  
+This TimeStamp is a number of milliseconds elapsed since 00:00:00 UTC, 1 Jan 1970."
+::=	{	rtpStatsLatestInterval	1
+	}
+
+rtpStatsLatestIntervalNInPackets	OBJECT-TYPE
+SYNTAX	 Counter64 
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of incoming RTP packets during the latest interval.  
+This counter consolidates the statistics reported by all sessions that ended during the interval.
+"
+::=	{	rtpStatsLatestInterval	2
+	}
+	
+rtpStatsLatestIntervalNOutPackets	OBJECT-TYPE
+SYNTAX	 Counter64 
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of outgoing RTP packets during the latest interval.  
+This counter consolidates the statistics reported by all sessions that ended during the interval.
+"
+::=	{	rtpStatsLatestInterval	3
+	}	
+
+rtpStatsLatestIntervalNInLostPackets	OBJECT-TYPE
+SYNTAX	 Counter32 
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of lost incoming RTP packets during the latest interval.  
+This counter consolidates the statistics reported by all sessions that ended during the interval.
+"
+::=	{	rtpStatsLatestInterval	4
+	}	
+
+rtpStatsLatestIntervalNOutLostPackets	OBJECT-TYPE
+SYNTAX	 Counter32 
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of lost outgoing RTP packets during the latest interval.  
+This counter relies on RTCP statistics reports and on terminal capability to issue them. 
+In the case those RTCP reports are not available the counter will not be fed.
+This counter consolidates the statistics reported by all sessions that ended during the interval.
+"
+::=	{	rtpStatsLatestInterval	5
+	}	
+
+rtpStatsLatestIntervalDelayTotal	OBJECT-TYPE
+SYNTAX	 Counter64 
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Total Round trip delay in ms during the latest interval: sum of all roundtrip delay published for all RTP streams. 
+This counter relies on RTCP statistics reports and on terminal capability to issue them. 
+In the case those RTCP reports are not available, such a KPI will not be fed. 
+This counter consolidates the statistics reported by all sessions that ended during the interval.
+"
+::=	{	rtpStatsLatestInterval	6
+	}	
+
+rtpStatsLatestIntervalDelayMax	OBJECT-TYPE
+SYNTAX	 Counter32 
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Maximum Round trip delay in ms during the latest interval. 
+This counter relies on RTCP statistics reports and on terminal capability to issue them. 
+In the case those RTCP reports are not available, such a KPI will not be fed. 
+This counter consolidates the statistics reported by all sessions that ended during the interval.
+"
+::=	{	rtpStatsLatestInterval	7
+	}	
+
+rtpStatsLatestIntervalDelayMaxTimeStamp	OBJECT-TYPE
+SYNTAX	 Counter64 
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "TimeStamp associated to the maximum Round trip delay during the latest interval.  
+This TimeStamp is a number of milliseconds elapsed since 00:00:00 UTC, 1 Jan 1970.
+"
+::=	{	rtpStatsLatestInterval	8
+	}	
+
+rtpStatsLatestIntervalDelayMean	OBJECT-TYPE
+SYNTAX	 Counter32
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Mean Round trip delay in ms during the latest interval. 
+This counter relies on RTCP statistics reports and on terminal capability to issue them. 
+In the case those RTCP reports are not available, such a KPI will not be fed. 
+This counter consolidates the statistics reported by all sessions that ended during the interval.
+"
+::=	{	rtpStatsLatestInterval	9
+	}	
+	
+rtpStatsLatestIntervalInJitterTotal	OBJECT-TYPE
+SYNTAX	 Counter64
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Total Jitter of incoming RTP packets in ms during the latest interval: sum of all jitter published for all RTP streams. 
+This counter consolidates the statistics reported by all sessions that ended during the interval.
+"
+::=	{	rtpStatsLatestInterval	10
+	}	
+
+rtpStatsLatestIntervalOutJitterTotal	OBJECT-TYPE
+SYNTAX	 Counter64
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Total Jitter of outgoing RTP packets in ms during the latest interval: sum of all jitter published for all RTP streams. 
+This counter relies on RTCP statistics reports and on terminal capability to issue them. 
+In the case those RTCP reports are not available, such a KPI will not be fed. 
+This counter consolidates the statistics reported by all sessions that ended during the interval.
+"
+::=	{	rtpStatsLatestInterval	11
+	}	
+
+rtpStatsLatestIntervalInJitterMax	OBJECT-TYPE
+SYNTAX	 Counter32
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Maximum Jitter of incoming RTP packets in ms during the latest interval. 
+This counter consolidates the statistics reported by all sessions that ended during the interval.
+"
+::=	{	rtpStatsLatestInterval	12
+	}	
+
+rtpStatsLatestIntervalInJitterMaxTimeStamp	OBJECT-TYPE
+SYNTAX	 Counter64 
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "TimeStamp associated to the maximum jitter of incoming RTP packets during the latest interval.  
+This TimeStamp is a number of milliseconds elapsed since 00:00:00 UTC, 1 Jan 1970."
+::=	{	rtpStatsLatestInterval	13
+	}		
+	
+rtpStatsLatestIntervalInJitterMean	OBJECT-TYPE
+SYNTAX	 Counter32
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Mean jitter of incoming RTP packets in ms during the latest interval.
+This counter consolidates the statistics reported by all sessions that ended during the interval.
+"
+::=	{	rtpStatsLatestInterval	14
+	}
+
+rtpStatsLatestIntervalOutJitterMean	OBJECT-TYPE
+SYNTAX	 Counter32
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Mean jitter of outgoing RTP packets in ms during the latest interval. 
+This counter relies on RTCP statistics reports and on terminal capability to issue them. 
+In the case those RTCP reports are not available, such a KPI will not be fed. 
+This counter consolidates the statistics reported by all sessions that ended during the interval.
+"
+::=	{	rtpStatsLatestInterval	15
+	}	
+
+rtpStatsLatestIntervalOutJitterMax	OBJECT-TYPE
+SYNTAX	 Counter32
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Maximum Jitter of outgoing RTP packets in ms during the latest interval. 
+This counter relies on RTCP statistics reports and on terminal capability to issue them. 
+In the case those RTCP reports are not available, such a KPI will not be fed. 
+This counter consolidates the statistics reported by all sessions that ended during the interval.
+"
+::=	{	rtpStatsLatestInterval	16
+	}	
+
+rtpStatsLatestIntervalOutJitterMaxTimeStamp	OBJECT-TYPE
+SYNTAX	 Counter64 
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "TimeStamp associated to the maximum jitter of outgoing RTP packets during the latest interval.  
+This TimeStamp is a number of milliseconds elapsed since 00:00:00 UTC, 1 Jan 1970."
+::=	{	rtpStatsLatestInterval	17
+	}
+
+rtpStatsLatestIntervalNbContributingSessions	OBJECT-TYPE
+SYNTAX	 Counter64 
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of sessions included in this interval. 
+Only the sessions that end during the interval contribute to the interval statistics."
+::=	{	rtpStatsLatestInterval	18
+	}	
+	
+rtpStatsLatestIntervalNInBytes	OBJECT-TYPE
+SYNTAX	 Counter64 
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of bytes of incoming RTP packets during the latest interval.  
+This counter consolidates the statistics reported by all sessions that ended during the interval.
+"
+::=	{	rtpStatsLatestInterval	19
+	}
+	
+rtpStatsLatestIntervalNOutBytes	OBJECT-TYPE
+SYNTAX	 Counter64 
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of bytes of outgoing RTP packets during the latest interval.  
+This counter consolidates the statistics reported by all sessions that ended during the interval.
+"
+::=	{	rtpStatsLatestInterval	20
+	}	
+-- =====================================================================================================================================
+-- MRFC statistics section : mrfp.2.5
+-- =====================================================================================================================================
+
+-- Mrfc Table
+
+mrfcTable       OBJECT-TYPE
+SYNTAX  SEQUENCE OF     MrfcEntry
+MAX-ACCESS      not-accessible
+STATUS  current
+DESCRIPTION     "mrfcTable Description"
+::=     {       mrfcBroker  1
+        }
+
+
+mrfcEntry       OBJECT-TYPE
+SYNTAX  MrfcEntry
+MAX-ACCESS      not-accessible
+STATUS  current
+DESCRIPTION     "The entry for mrfcTable"
+INDEX {  mrfcAddress  }
+::=     {       mrfcTable       1
+        }
+
+MrfcEntry       ::=  SEQUENCE   { mrfcOldAssociationState MrfcState,
+                                  mrfcNewAssociationState MrfcState,
+                                  mrfcAddress DisplayString
+}
+
+mrfcOldAssociationState        OBJECT-TYPE
+SYNTAX  MrfcState
+MAX-ACCESS      accessible-for-notify
+STATUS  current
+DESCRIPTION      "Mrfc old state"
+::=     {       mrfcEntry       1
+        }
+
+mrfcNewAssociationState        OBJECT-TYPE
+SYNTAX  MrfcState
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Mrfc new state"
+::=     {       mrfcEntry       2
+        }
+
+mrfcAddress OBJECT-TYPE
+SYNTAX  DisplayString
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Mrfc associated IP address and port"
+::=     {       mrfcEntry       3
+        }
+
+-- End of Mrfc table
+
+mrfcActiveAddress OBJECT-TYPE
+SYNTAX  DisplayString
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Current active Mrfc associated IP address and port"
+::=     {       mrfcBroker  2
+        }
+
+
+-- =====================================================================================================================================
+-- MRFP CONFIG section : mrfp.2.6
+-- =====================================================================================================================================
+
+ConfigurationContentState ::= TEXTUAL-CONVENTION
+	STATUS		current
+	DESCRIPTION
+		"Enum: Configuration file content different states
+		       - invalid : Current Mrfp configuration file content is invalid
+		       - updated : Current Mrfp configuration file content has been updated"
+	SYNTAX		INTEGER { invalid(0), updated(1) }
+
+
+ConfigurationAccessState ::= TEXTUAL-CONVENTION
+	STATUS		current
+	DESCRIPTION
+		"Enum: Configuration server different states
+		        - primary     : Primary server is used for Mrfp configuration
+		        - backup      : Backup server is used for Mrfp configuration (primary server unavailable)
+		        - local       : Local server is used for Mrfp configuration
+		        - unavailable : No configuration server are available for Mrfp configuration"
+	SYNTAX		INTEGER { primary(0), backup(1), local(2), unavailable(3) }
+
+
+
+mrfpConfiguration	OBJECT IDENTIFIER
+::=	{	configuration	1
+	}
+
+
+mrfpConfigurationFileNames     OBJECT-TYPE
+SYNTAX  DisplayString
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Mrfp configuration file names"
+::=     {       mrfpConfiguration    1
+        }
+
+mrfpConfigurationUrlList	OBJECT-TYPE
+SYNTAX	DisplayString
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "List of Mrfp configuration Urls"
+::=	{	mrfpConfiguration	2
+	}
+
+mrfpConfigurationUsedUrl	OBJECT-TYPE
+SYNTAX	DisplayString
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Mrfp consolidated configuration used Url"
+::=	{	mrfpConfiguration	3
+	}
+
+mrfpConfigurationOldAccessState	OBJECT-TYPE
+SYNTAX	ConfigurationAccessState
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Mrfp configuration server old access state"
+::=	{	mrfpConfiguration	4
+	}
+
+mrfpConfigurationNewAccessState	OBJECT-TYPE
+SYNTAX	ConfigurationAccessState
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Mrfp configuration server new access state"
+::=	{	mrfpConfiguration	5
+	}
+
+      
+-- file configuration table 
+
+configurationTable    OBJECT-TYPE
+SYNTAX  SEQUENCE OF     ConfigurationEntry
+MAX-ACCESS      not-accessible
+STATUS  current
+DESCRIPTION     "A list of the Mrfp configuration files and their associated states"
+::=     {       configuration      2
+        }
+
+configurationEntry    OBJECT-TYPE
+SYNTAX  ConfigurationEntry
+MAX-ACCESS      not-accessible
+STATUS  current
+DESCRIPTION     "The entry for trapTable"
+INDEX {  configurationFileName  }
+::=     {       configurationTable    1
+        }
+
+ConfigurationEntry    ::=  SEQUENCE   { configurationFileName DisplayString,
+                                        configurationUrlList DisplayString,
+                                        configurationOldAccessState ConfigurationAccessState,
+                                        configurationNewAccessState ConfigurationAccessState,
+                                        configurationOldContentState ConfigurationContentState,
+                                        configurationNewContentState ConfigurationContentState
+
+}
+
+configurationFileName     OBJECT-TYPE
+SYNTAX  DisplayString
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Mrfp configuration file name"
+::=     {       configurationEntry    1
+        }
+
+configurationUrlList	OBJECT-TYPE
+SYNTAX	DisplayString
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "List of Mrfp configuration Urls"
+::=	{	configurationEntry	2
+	}
+
+configurationOldAccessState	OBJECT-TYPE
+SYNTAX	ConfigurationAccessState
+MAX-ACCESS	accessible-for-notify
+STATUS	current
+DESCRIPTION	 "Mrfp configuration file server old access state"
+::=	{	configurationEntry	3
+	}
+
+configurationNewAccessState	OBJECT-TYPE
+SYNTAX	ConfigurationAccessState
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Mrfp configuration file server new access state"
+::=	{	configurationEntry	4
+	}
+
+configurationOldContentState	OBJECT-TYPE
+SYNTAX	ConfigurationContentState
+MAX-ACCESS	accessible-for-notify
+STATUS	current
+DESCRIPTION	 "Mrfp configuration file old content state"
+::=	{	configurationEntry	5
+	}
+
+configurationNewContentState	OBJECT-TYPE
+SYNTAX	ConfigurationContentState
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Mrfp configuration file new content state"
+::=	{	configurationEntry	6
+	}
+
+
+
+
+-- =====================================================================================================================================
+-- SDSPCE statistic section : mrfp.2.7
+-- =====================================================================================================================================
+
+-- Sdspce Table
+
+sdspceTable    OBJECT-TYPE
+SYNTAX  SEQUENCE OF     SdspceEntry
+MAX-ACCESS      not-accessible
+STATUS  current
+DESCRIPTION     "A list of Soft DSP conference engines (video) and their associated states"
+::=     {       sdspceBroker      1
+        }
+
+sdspceEntry    OBJECT-TYPE
+SYNTAX  SdspceEntry
+MAX-ACCESS      not-accessible
+STATUS  current
+DESCRIPTION     "The entry for sdspceTable"
+INDEX {  sdspceReferenceName  }
+::=     {       sdspceTable    1
+        }
+
+SdspceEntry    ::=  SEQUENCE   {
+					                    sdspceAddress DisplayString,
+					                    sdspceIncommingNetworkBitRate INTEGER,
+					                    sdspceOutgoingNetworkBitRate INTEGER,
+					                    sdspceConnectionOldState SdspceConnectionState,
+                                        sdspceConnectionNewState SdspceConnectionState,
+                                        sdspceOverloadOldState SdspceOverloadState,
+                                        sdspceOverloadNewState SdspceOverloadState,
+                                        sdspceDaemonConnectionState SdspceConnectionState,
+					                    sdspceReferenceName DisplayString
+}
+
+
+sdspceAddress OBJECT-TYPE
+SYNTAX  DisplayString
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Soft DSP conference engine (video) associated address"
+::=     {       sdspceEntry    1
+        }
+
+
+sdspceIncommingNetworkBitRate OBJECT-TYPE
+SYNTAX  INTEGER
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Soft DSP conference engine (video) incomming bit rate"
+::=     {       sdspceEntry    2
+        }
+
+sdspceOutgoingNetworkBitRate OBJECT-TYPE
+SYNTAX  INTEGER
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Soft DSP conference engine (video) outgoing bit rate"
+::=     {       sdspceEntry    3
+        }
+
+
+sdspceConnectionOldState	OBJECT-TYPE
+SYNTAX	SdspceConnectionState
+MAX-ACCESS	accessible-for-notify
+STATUS	current
+DESCRIPTION	 "Soft DSP conference engine (video) connection old state"
+::=	{	sdspceEntry	4
+	}
+
+sdspceConnectionNewState	OBJECT-TYPE
+SYNTAX	SdspceConnectionState
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Soft DSP conference engine (video) connection new state"
+::=	{	sdspceEntry	5
+	}
+
+sdspceOverloadOldState	OBJECT-TYPE
+SYNTAX	SdspceOverloadState
+MAX-ACCESS	accessible-for-notify
+STATUS	current
+DESCRIPTION	 "Soft DSP conference engine (video) QoS old state"
+::=	{	sdspceEntry	6
+	}
+
+sdspceOverloadNewState	OBJECT-TYPE
+SYNTAX	SdspceOverloadState
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Soft DSP conference engine (video) QoS new state"
+::=	{	sdspceEntry	7
+	}
+
+sdspceDaemonConnectionState	OBJECT-TYPE
+SYNTAX	SdspceConnectionState
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Soft DSP conference engine (video) connection to the daemon service state"
+::=	{	sdspceEntry	8
+	}
+
+sdspceReferenceName     OBJECT-TYPE
+SYNTAX  DisplayString
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Soft DSP conference engine (video) reference name"
+::=     {       sdspceEntry    9
+        }
+
+
+-- End of Sdspce Table
+
+-- Sdspce Global stats
+
+sdspceBrokerStats	OBJECT IDENTIFIER
+::=	{	sdspceBroker	2
+	}
+
+
+sdspceEstablished	OBJECT IDENTIFIER
+::=	{	sdspceBrokerStats	1
+	}
+
+
+sdspceNEstablishedConferences   OBJECT-TYPE
+SYNTAX      INTEGER
+MAX-ACCESS  read-only
+STATUS      current
+DESCRIPTION "Number of current video conferences established on the Soft DSP conference engines"
+::=   {     sdspceEstablished      1
+       }
+
+sdspceNEstablishedParticipants   OBJECT-TYPE
+SYNTAX      INTEGER
+MAX-ACCESS  read-only
+STATUS      current
+DESCRIPTION "Number of current video conferences participants established on the Soft DSP conference engines"
+::=   {     sdspceEstablished      2
+      }
+
+
+sdspceCompleted	OBJECT IDENTIFIER
+::=	{	sdspceBrokerStats	2
+	}
+
+
+sdspceNCompletedConferences   OBJECT-TYPE
+SYNTAX      INTEGER
+MAX-ACCESS  read-only
+STATUS      current
+DESCRIPTION "Number of successful video conferences completed on the Soft DSP conference engines"
+::=   {     sdspceCompleted      1
+      }
+
+sdspceNCompletedParticipants   OBJECT-TYPE
+SYNTAX      INTEGER
+MAX-ACCESS  read-only
+STATUS      current
+DESCRIPTION "Number of successful video conferences participants completed on the Soft DSP conference engines"
+::=   {     sdspceCompleted      2
+      }
+
+sdspceNCompletedAverageParticipants   OBJECT-TYPE
+SYNTAX      INTEGER
+MAX-ACCESS  read-only
+STATUS      current
+DESCRIPTION "Average number of successful video conferences participants completed on the Soft DSP conference engines"
+::=   {     sdspceCompleted      3
+      }
+
+sdspceNCompletedAverageDuration   OBJECT-TYPE
+SYNTAX      DisplayString
+MAX-ACCESS  read-only
+STATUS      current
+DESCRIPTION "Average duration of successful video conferences completed on the Soft DSP conference engines"
+::=   {     sdspceCompleted      4
+      }
+
+sdspceFailed	OBJECT IDENTIFIER
+::=	{	sdspceBrokerStats	3
+	}
+
+
+sdspceNFailedConferences      OBJECT-TYPE
+SYNTAX      INTEGER
+MAX-ACCESS  read-only
+STATUS      current
+DESCRIPTION "Number of unsuccessful video conferences triggered on the Soft DSP conference engines"
+::=   {     sdspceFailed      1
+      }
+
+
+sdspceNFailedParticipants   OBJECT-TYPE
+SYNTAX      INTEGER
+MAX-ACCESS  read-only
+STATUS      current
+DESCRIPTION "Number of unsuccessful video conferences participants triggered on the Soft DSP conference engines"
+::=   {     sdspceFailed     2
+      }
+
+sdspceNFailedAverageParticipants   OBJECT-TYPE
+SYNTAX      INTEGER
+MAX-ACCESS  read-only
+STATUS      current
+DESCRIPTION "Average unsuccessful of refused video conferences participants triggered on the Soft DSP conference engines"
+::=   {     sdspceFailed      3
+      }
+
+
+sdspceRefused	OBJECT IDENTIFIER
+::=	{	sdspceBrokerStats	4
+	}
+
+sdspceNRefusedConferences     OBJECT-TYPE
+SYNTAX      INTEGER
+MAX-ACCESS  read-only
+STATUS      current
+DESCRIPTION "Number of refused video conferences triggered on the Soft DSP conference engines"
+::=   {     sdspceRefused      1
+      }
+
+
+sdspceNRefusedConferencesNoResources     OBJECT-TYPE
+SYNTAX      INTEGER
+MAX-ACCESS  read-only
+STATUS      current
+DESCRIPTION "Number of refused video conferences triggered on the Soft DSP conference engines [reason: not enough resources]"
+::=   {     sdspceRefused      2
+      }
+
+sdspceNRefusedConferencesUnavailable     OBJECT-TYPE
+SYNTAX      INTEGER
+MAX-ACCESS  read-only
+STATUS      current
+DESCRIPTION "Number of refused video conferences triggered on the Soft DSP conference engines [reason: Sdspce unavailable]"
+::=   {     sdspceRefused      3
+      }
+
+
+sdspceNRefusedConferencesBadSyntax     OBJECT-TYPE
+SYNTAX      INTEGER
+MAX-ACCESS  read-only
+STATUS      current
+DESCRIPTION "Number of refused video conferences triggered on the Soft DSP conference engines [reason: Sdspce bad syntax]"
+::=   {     sdspceRefused      4
+      }
+
+sdspceNRefusedConferencesBadPolicy     OBJECT-TYPE
+SYNTAX      INTEGER
+MAX-ACCESS  read-only
+STATUS      current
+DESCRIPTION "Number of refused video conferences triggered on the Soft DSP conference engines [reason: bad Sdspce conference policy]"
+::=   {     sdspceRefused      5
+      }
+
+
+
+-- =====================================================================================================================================
+-- Stack section : mrfp.3
+-- =====================================================================================================================================
+
+-- =====================================================================================================================================
+-- Package section : mrfp.4
+-- =====================================================================================================================================
+
+-- =========================================================
+-- AASASR Package section :  Advanced Audio Server Digit ASR
+-- =========================================================
+
+aasasrPackage	OBJECT IDENTIFIER
+::=	{	packages	1
+	}
+
+aasasrCompletedSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of AASASR (Advanced Audio Server Digit ASR) signals successfully played by the Mrfp"
+::=	{	aasasrPackage	3
+	}
+
+aasasrFailureSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of AASASR (Advanced Audio Server Digit ASR) signals not successfully played by the Mrfp"
+::=	{	aasasrPackage	4
+	}
+
+aasasrInterruptedSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of played AASASR (Advanced Audio Server Digit ASR) signals interrupted by the Mrfc"
+::=	{	aasasrPackage	5
+	}
+
+aasasrSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Total number of AASASR (Advanced Audio Server Digit ASR) signals played by the Mrfp"
+::=	{	aasasrPackage	6
+	}
+
+aasasrSuccessEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of successful AASASR (Advanced Audio Server Digit ASR) events generated by the Mrfp"
+::=	{	aasasrPackage	7
+	}
+
+aasasrTransmittedSuccessEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of successful AASASR (Advanced Audio Server Digit ASR) events sent (to the Mrfc) by the Mrfp"
+::=	{	aasasrPackage	8
+	}
+
+aasasrFailureEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of failed AASASR (Advanced Audio Server Digit ASR) events generated by the Mrfp"
+::=	{	aasasrPackage	9
+	}
+
+aasasrTransmittedFailureEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of failed AASASR (Advanced Audio Server Digit ASR) events sent (to the Mrfc) by the Mrfp"
+::=	{	aasasrPackage	10
+	}
+
+-- =======================================================
+-- AASB Package section : Advanced Audio Server Digit Base
+-- =======================================================
+
+aasbPackage	OBJECT IDENTIFIER
+::=	{	packages	2
+	}
+
+aasbCompletedSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of AASB (Advanced Audio Server Digit Base) signals successfully played by the Mrfp"
+::=	{	aasbPackage	3
+	}
+
+aasbFailureSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of AASB (Advanced Audio Server Digit Base) signals not successfully played by the Mrfp"
+::=	{	aasbPackage	4
+	}
+
+aasbInterruptedSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of played AASB (Advanced Audio Server Digit Base) signals interrupted by the Mrfc"
+::=	{	aasbPackage	5
+	}
+
+aasbSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Total number of AASB (Advanced Audio Server Digit Base) signals played by the Mrfp"
+::=	{	aasbPackage	6
+	}
+
+aasbFailureEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of failed AASB (Advanced Audio Server Digit Base) events generated by the Mrfp"
+::=	{	aasbPackage	7
+	}
+
+aasbTransmittedFailureEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of failed AASB (Advanced Audio Server Digit Base) events sent (to the Mrfc) by the Mrfp"
+::=	{	aasbPackage	8
+	}
+
+
+-- ==============================================================
+-- AASDC Package section : Advanced Audio Server Digit Collection
+-- ==============================================================
+
+aasdcPackage	OBJECT IDENTIFIER
+::=	{	packages	3
+	}
+
+
+aasdcCompletedSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of AASDC (Advanced Audio Server Digit Collection) signals successfully played by the Mrfp"
+::=	{	aasdcPackage	3
+	}
+
+aasdcFailureSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of AASDC (Advanced Audio Server Digit Collection) signals not successfully played by the Mrfp"
+::=	{	aasdcPackage	4
+	}
+
+aasdcInterruptedSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of played AASDC (Advanced Audio Server Digit Collection) signals interrupted by the Mrfc"
+::=	{	aasdcPackage	5
+	}
+
+aasdcSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Total number of AASDC (Advanced Audio Server Digit Collection) signals played by the Mrfp"
+::=	{	aasdcPackage	6
+	}
+
+aasdcSuccessEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of successful AASDC (Advanced Audio Server Digit Collection) events generated by the Mrfp"
+::=	{	aasdcPackage	7
+	}
+
+aasdcTransmittedSuccessEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of successful AASDC (Advanced Audio Server Digit Collection) events sent (to the Mrfc) by the Mrfp"
+::=	{	aasdcPackage	8
+	}
+
+aasdcFailureEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of failed AASDC (Advanced Audio Server Digit Collection) events generated by the Mrfp"
+::=	{	aasdcPackage	9
+	}
+
+aasdcTransmittedFailureEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of failed AASDC (Advanced Audio Server Digit Collection) events sent (to the Mrfc) by the Mrfp"
+::=	{	aasdcPackage	10
+	}
+
+
+-- =====================================================
+-- AASREC Package section : Advanced Audio Server Record
+-- =====================================================
+
+aasrecPackage	OBJECT IDENTIFIER
+::=	{	packages	4
+	}
+
+aasrecCompletedSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of AASREC (Advanced Audio Server Record) signals successfully played by the Mrfp"
+::=	{	aasrecPackage	3
+	}
+
+aasrecFailureSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of AASREC (Advanced Audio Server Record) signals not successfully played by the Mrfp"
+::=	{	aasrecPackage	4
+	}
+
+aasrecInterruptedSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of played AASREC (Advanced Audio Server Record) signals interrupted by the Mrfc"
+::=	{	aasrecPackage	5
+	}
+
+aasrecSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Total number of AASREC (Advanced Audio Server Record) signals played by the Mrfp"
+::=	{	aasrecPackage	6
+	}
+
+aasrecSuccessEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of successful AASREC (Advanced Audio Server Record) events generated by the Mrfp"
+::=	{	aasrecPackage	7
+	}
+
+aasrecTransmittedSuccessEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of successful AASREC (Advanced Audio Server Record) events sent (to the Mrfc) by the Mrfp"
+::=	{	aasrecPackage	8
+	}
+
+
+aasrecFailureEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of failed AASREC (Advanced Audio Server Record) events generated by the Mrfp"
+::=	{	aasrecPackage	9
+	}
+
+aasrecTransmittedFailureEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of failed AASREC (Advanced Audio Server Record) events sent (to the Mrfc) by the Mrfp"
+::=	{	aasrecPackage	10
+	}
+
+aasrecMakepersistantSignalsNumber	  OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Total number of AASREC (Advanced Audio Server Record) Make Persistant signals played by the Mrfp"
+::=	{	aasrecPackage	11
+	}
+
+aasrecMakepersistantCompletedSignalsNumber		OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of AASREC (Advanced Audio Server Record) Make Persistant signals successfully played by the Mrfp"
+::=	{	aasrecPackage	12
+	}
+
+aasrecMakepersistantFailureSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of AASREC (Advanced Audio Server Record) Make Persistant signals not successfully played by the Mrfp"
+::=	{	aasrecPackage	13
+	}
+
+aasrecMakepersistantInterruptedSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number AASREC (Advanced Audio Server Record) Make Persistant signals interrupted by the Mrfc"
+::=	{	aasrecPackage	14
+	}
+
+
+-- ==================================================
+-- AASTTS Package section : Advanced Audio Server TTS
+-- ==================================================
+
+aasttsPackage	OBJECT IDENTIFIER
+::=	{	packages	5
+	}
+
+
+aasttsCompletedSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of AASTTS (Advanced Audio Server TTS) signals successfully played by the Mrfp"
+::=	{	aasttsPackage	3
+	}
+
+aasttsFailureSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of AASTTS (Advanced Audio Server TTS) signals not successfully played by the Mrfp"
+::=	{	aasttsPackage	4
+	}
+
+aasttsInterruptedSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of AASTTS (Advanced Audio Server TTS) signals interrupted by the Mrfc"
+::=	{	aasttsPackage	5
+	}
+
+aasttsSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Total number of AASTTS (Advanced Audio Server TTS) signals played by the Mrfp"
+::=	{	aasttsPackage	6
+	}
+
+aasttsSuccessEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of successful AASTTS (Advanced Audio Server TTS) events generated by the Mrfp"
+::=	{	aasttsPackage	7
+	}
+
+aasttsTransmittedSuccessEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of successful AASTTS (Advanced Audio Server TTS) events sent (to the Mrfc) by the Mrfp"
+::=	{	aasttsPackage	8
+	}
+
+aasttsFailureEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of failed AASTTS (Advanced Audio Server TTS) events generated by the Mrfp"
+::=	{	aasttsPackage	9
+	}
+
+aasttsTransmittedFailureEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of failed AASTTS (Advanced Audio Server TTS) events sent (to the Mrfc) by the Mrfp"
+::=	{	aasttsPackage	10
+	}
+
+-- =========================================
+-- AN Package section : Generic Announcement
+-- =========================================
+
+anPackage	OBJECT IDENTIFIER
+::=	{	packages	6
+	}
+
+anApfCompletedSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of AN (Generic Announcement) Announcement Play Fixed signals successfully played by the Mrfp"
+::=	{	anPackage	3
+	}
+
+anApfFailureSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of AN (Generic Announcement) Announcement Play Fixed signals not successfully played by the Mrfp"
+::=	{	anPackage	4
+	}
+
+anApfInterruptedSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of played AN (Generic Announcement) Announcement Play Fixed signals interrupted by the Mrfc"
+::=	{	anPackage	5
+	}
+
+anApfSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Total number of AN (Generic Announcement) Announcement Play Fixed signals played by the Mrfp"
+::=	{	anPackage	6
+	}
+
+anApvCompletedSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of AN (Generic Announcement) Announcement Play Variable signals successfully played by the Mrfp"
+::=	{	anPackage	7
+	}
+
+anApvFailureSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of AN (Generic Announcement) Announcement Play Variable signals not successfully played by the Mrfp"
+::=	{	anPackage	8
+	}
+
+anApvInterruptedSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of AN (Generic Announcement) Announcement Play Variable signals interrupted by the Mrfc"
+::=	{	anPackage	9
+	}
+
+anApvSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Total number of AN (Generic Announcement) Announcement Play Variable signals played by the Mrfp"
+::=	{	anPackage	10
+	}
+
+
+-- ================================================
+-- BIZTN Package section : Business Tone Generation
+-- ================================================
+
+biztnPackage	OBJECT IDENTIFIER
+::=	{	packages	7
+	}
+
+biztnCompletedSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of BIZTN (Business Tone Generation) signals successfully played by the Mrfp"
+::=	{	biztnPackage	3
+	}
+
+biztnFailureSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of BIZTN (Business Tone Generation) signals not successfully played by the Mrfp"
+::=	{	biztnPackage	4
+	}
+
+biztnSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Total number of BIZTN (Business Tone Generation) signals played by the Mrfp"
+::=	{	biztnPackage	5
+	}
+
+-- ==================================================
+-- CG Package section : Call Progress Tone Generation
+-- ==================================================
+
+cgPackage	OBJECT IDENTIFIER
+::=	{	packages	8
+	}
+
+cgCompletedSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of CG (Call Progress Tone Generation) signals successfully played by the Mrfp"
+::=	{	cgPackage	3
+	}
+
+cgFailureSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of CG (Call Progress Tone Generation) signals not successfully played by the Mrfp"
+::=	{	cgPackage	4
+	}
+
+cgSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Total number of CG (Call Progress Tone Generation) signals played by the Mrfp"
+::=	{	cgPackage	5
+	}
+
+
+-- =========================================
+-- CHP Package section : Congestion Handling
+-- =========================================
+
+
+chpPackage	OBJECT IDENTIFIER
+::=	{	packages	9
+	}
+
+chpMgconEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of CHP (Congestion Handling) MG Congestion events generated by the Mrfp"
+::=	{	chpPackage	3
+	}
+
+chpTransmittedMgconEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of CHP (Congestion Handling) MG Congestion events sent (to the Mrfc) by the Mrfp"
+::=	{	chpPackage	4
+	}
+
+
+-- ===================================================
+-- CONFTN Package section : Conference Tone Generation
+-- ===================================================
+
+conftnPackage	OBJECT IDENTIFIER
+::=	{	packages	10
+	}
+
+conftnCompletedSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of CONFTN (Conference Tone Generation) signals successfully played by the Mrfp"
+::=	{	conftnPackage	3
+	}
+
+conftnFailureSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of CONFTN (Conference Tone Generation) signals not successfully played by the Mrfp"
+::=	{	conftnPackage	4
+	}
+
+conftnSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Total number of CONFTN (Conference Tone Generation) signals played by the Mrfp"
+::=	{	conftnPackage	5
+	}
+
+
+-- ===================================
+-- DD Package section : Dtmf Detection
+-- ===================================
+
+ddPackage	OBJECT IDENTIFIER
+::=	{	packages 	11
+	}
+
+ddCeEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of DD (Dtmf Detection) Completion Event events generated by the Mrfp"
+::=	{	ddPackage	3
+	}
+
+ddTransmittedCeEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of DD (Dtmf Detection) Completion Event events sent (to the Mrfc) by the Mrfp"
+::=	{	ddPackage	4
+	}
+
+
+-- ===========================
+-- G Package section : Generic
+-- ===========================
+
+gPackage	OBJECT IDENTIFIER
+::=	{	packages	12
+	}
+
+gCauseEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of G (Generic) Cause events generated by the Mrfp"
+::=	{	gPackage	3
+	}
+
+gTransmittedCauseEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of G (Generic) Cause events sent (to the Mrfc) by the Mrfp"
+::=	{	gPackage	4
+	}
+
+gScEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of G (Generic) Signal Complete events generated by the Mrfp"
+::=	{	gPackage	5
+	}
+
+gTransmittedScEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of G (Generic) Signal Complete events sent (to the Mrfc) by the Mrfp"
+::=	{	gPackage	6
+	}
+
+
+-- =================================================
+-- INTTN Package section : Intrusion Tones Generation
+-- =================================================
+
+inttnPackage	OBJECT IDENTIFIER
+::=	{	packages	13
+	}
+
+inttnCompletedSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of INTTN (Intrusion Tones Generation) signals successfully played by the Mrfp"
+::=	{	inttnPackage	3
+	}
+
+inttnFailureSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of INTTN (Intrusion Tones Generation) signals not successfully played by the Mrfp"
+::=	{	inttnPackage	4
+	}
+
+inttnInterruptedSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of played INTTN (Intrusion Tones Generation) signals interrupted by the Mrfc"
+::=	{	inttnPackage	5
+	}
+
+inttnSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Total number of INTTN (Intrusion Tones Generation) signals played by the Mrfp"
+::=	{	inttnPackage	6
+	}
+
+
+-- =====================================
+-- IT Package section : Inactivity Timer
+-- =====================================
+
+itPackage	OBJECT IDENTIFIER
+::=	{	packages	14
+	}
+
+itEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of IT (Inactivity Timer) events generated by the Mrfp"
+::=	{	itPackage	3
+	}
+
+itTransmittedEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of IT (Inactivity Timer) events sent (to the Mrfc) by the Mrfp"
+::=	{	itPackage	4
+	}
+
+
+-- ============================
+-- NT Package section : Network
+-- ============================
+
+ntPackage	OBJECT IDENTIFIER
+::=	{	packages	15
+	}
+
+ntNetfailEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of NT (Network) Netfail events generated by the Mrfp"
+::=	{	ntPackage	3
+	}
+
+ntTransmittedNetfailEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of NT (Network) Netfail events sent (to the Mrfc) by the Mrfp"
+::=	{	ntPackage	4
+	}
+
+ntQualertEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of NT (Network) Qualert events generated by the Mrfp"
+::=	{	ntPackage	5
+	}
+
+ntTransmittedQualertEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of NT (Network) Qualert events sent (to the Mrfc) by the Mrfp"
+::=	{	ntPackage	6
+	}
+
+-- ======================================
+-- OCP Package section : Overload Control
+-- ======================================
+
+ocpPackage	OBJECT IDENTIFIER
+::=	{	packages	16
+	}
+
+ocpOverloadEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of OCP (Overload Control) Overload events generated by the Mrfp"
+::=	{	ocpPackage	3
+	}
+
+ocpTransmittedOverloadEventNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of OCP (Overload Control) Overload events sent (to the Mrfc) by the Mrfp"
+::=	{	ocpPackage	4
+	}
+
+
+-- ===========================================
+-- SRVTN Package section : Basic Service Tones
+-- ===========================================
+
+srvtnPackage	OBJECT IDENTIFIER
+::=	{	packages	17
+	}
+
+srvtnCompletedSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of SRVTN (Basic Service Tones) signals successfully played by the Mrfp"
+::=	{	srvtnPackage	3
+	}
+
+srvtnFailureSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of SRVTN (Basic Service Tones) signals not successfully played by the Mrfp"
+::=	{	srvtnPackage	4
+	}
+
+srvtnSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Total number of SRVTN (Basic Service Tones) signals played by the Mrfp"
+::=	{	srvtnPackage	5
+	}
+
+
+-- =======================================
+-- VFU Package section : Video Fast Update
+-- =======================================
+
+vfuPackage	OBJECT IDENTIFIER
+::=	{	packages	18
+	}
+
+vfuCompletedSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of VFU (Video Fast Update) signals successfully played by the Mrfp"
+::=	{	vfuPackage	3
+	}
+
+vfuFailureSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of VFU (Video Fast Update) signals not successfully played by the Mrfp"
+::=	{	vfuPackage	4
+	}
+
+vfuEventNumber OBJECT-TYPE
+SYNTAX      INTEGER
+MAX-ACCESS  read-only
+STATUS      current
+DESCRIPTION "Number of VFU (Video Fast Update) events generated by the Mrfp"
+::=   {     vfuPackage  5
+      }
+
+vfuTransmittedEventNumber OBJECT-TYPE
+SYNTAX      INTEGER
+MAX-ACCESS  read-only
+STATUS      current
+DESCRIPTION "Number of VFU (Video Fast Update) events sent (to the Mrfc) by the Mrfp"
+::=   {     vfuPackage  6
+      }
+
+-- =========================================
+-- XCG Package section : Call Progress Tones
+-- =========================================
+
+xcgPackage	OBJECT IDENTIFIER
+::=	{	packages	19
+	}
+
+xcgCompletedSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of XCG (Call Progress Tones) signals successfully played by the Mrfp"
+::=	{	xcgPackage	3
+	}
+
+xcgFailureSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of XCG (Call Progress Tones) signals not successfully played by the Mrfp"
+::=	{	xcgPackage	4
+	}
+
+xcgSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Total number of XCG (Call Progress Tones) signals played by the Mrfp"
+::=	{	xcgPackage	5
+	}
+
+-- =====================================================
+-- XSRVTN Package section : Expanded Call Progress Tones
+-- =====================================================
+
+
+xsrvtnPackage	OBJECT IDENTIFIER
+::=	{	packages	20
+	}
+
+xsrvtnCompletedSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of XSRVTN (Expanded Call Progress Tones) signals successfully played by the Mrfp"
+::=	{	xsrvtnPackage	3
+	}
+
+xsrvtnFailureSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of XSRVTN (Expanded Call Progress Tones) signals successfully played by the Mrfp"
+::=	{	xsrvtnPackage	4
+	}
+
+xsrvtnSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Total number of XSRVTN (Expanded Call Progress Tones) signals played by the Mrfp"
+::=	{	xsrvtnPackage	5
+	}
+
+-- =======================================
+-- HPINSERT Package section : HP Insertion
+-- =======================================
+
+hpinsertPackage	OBJECT IDENTIFIER
+::=	{	packages	21
+	}
+
+hpinsertTextSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Total number of HPINSERT (HP Insertion) text signals played by the Mrfp"
+::=	{	hpinsertPackage	3
+	}
+
+hpinsertInterruptedTextSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of HPINSERT (HP Insertion) text signals interrupted by the Mrfc"
+::=	{	hpinsertPackage	4
+	}
+
+hpinsertCompletedTextSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of HPINSERT (HP Insertion) text signals successfully played by the Mrfp"
+::=	{	hpinsertPackage	5
+	}
+
+hpinsertFailureTextSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of HPINSERT (HP Insertion) text signals not successfully played by the Mrfp"
+::=	{	hpinsertPackage	6
+	}
+
+-- ============================================
+-- HPLAYOUT Package section : HP Layout Control
+-- ============================================
+
+hplayoutPackage	OBJECT IDENTIFIER
+::=	{	packages	22
+	}
+
+hplayoutSetSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Total number of HPLAYOUT (HP Layout Control) set signals played by the Mrfp"
+::=	{	hplayoutPackage	3
+	}
+
+hplayoutInterruptedSetSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of HPLAYOUT (HP Layout Control) set signals interrupted by the Mrfc"
+::=	{	hplayoutPackage	4
+	}
+
+hplayoutCompletedSetSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of HPLAYOUT (HP Layout Control) set signals successfully played by the Mrfp"
+::=	{	hplayoutPackage	5
+	}
+
+hplayoutFailureSetSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of HPLAYOUT (HP Layout Control) set signals not successfully played by the Mrfp"
+::=	{	hplayoutPackage	6
+	}
+
+hplayoutSwitchSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Total number of HPLAYOUT (HP Layout Control) switch signals played by the Mrfp"
+::=	{	hplayoutPackage	7
+	}
+
+hplayoutInterruptedSwitchSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of HPLAYOUT (HP Layout Control) switch signals interrupted by the Mrfc"
+::=	{	hplayoutPackage	8
+	}
+
+hplayoutCompletedSwitchSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of HPLAYOUT (HP Layout Control) switch signals successfully played by the Mrfp"
+::=	{	hplayoutPackage	9
+	}
+
+hplayoutFailureSwitchSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of HPLAYOUT (HP Layout Control) switch signals not successfully played by the Mrfp"
+::=	{	hplayoutPackage	10
+	}
+
+hplayoutVadSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Total number of HPLAYOUT (HP Layout Control) voice audio detection signals played by the Mrfp"
+::=	{	hplayoutPackage	11
+	}
+
+hplayoutInterruptedVadSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of HPLAYOUT (HP Layout Control) voice audio detection signals interrupted by the Mrfc"
+::=	{	hplayoutPackage	12
+	}
+
+hplayoutCompletedVadSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of HPLAYOUT (HP Layout Control) voice audio detection signals successfully played by the Mrfp"
+::=	{	hplayoutPackage	13
+	}
+
+hplayoutFailureVadSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of HPLAYOUT (HP Layout Control) voice audio detection signals not successfully played by the Mrfp"
+::=	{	hplayoutPackage	14
+	}
+
+-- ==================================================
+-- DG Package section : Basic DMTF Generation
+-- ==================================================
+
+dgPackage	OBJECT IDENTIFIER
+::=	{	packages	23
+	}
+
+dgCompletedSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of DG (Basic DTMF Generation) signals successfully emitted by the Mrfp"
+::=	{	dgPackage	3
+	}
+
+dgFailureSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Number of DG (Basic DTMF Generation) signals not successfully emitted by the Mrfp"
+::=	{	dgPackage	4
+	}
+
+dgSignalsNumber	OBJECT-TYPE
+SYNTAX	INTEGER
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Total number of DG (Basic DTMF Generation) signals emitted by the Mrfp"
+::=	{	dgPackage	5
+	}
+
+-- =====================================================================================================================================
+-- trap definition (coming from a OC products standard trap events ) : mrfp.1
+-- =====================================================================================================================================
+
+-- Active Alarm Trap table
+
+trapTable    OBJECT-TYPE
+SYNTAX  SEQUENCE OF     TrapEntry
+MAX-ACCESS      not-accessible
+STATUS  current
+DESCRIPTION     "A list of the Mrfp current active (not cleared) alarm/traps and their last emission date"
+::=     {       status      6
+        }
+
+trapEntry    OBJECT-TYPE
+SYNTAX  TrapEntry
+MAX-ACCESS      not-accessible
+STATUS  current
+DESCRIPTION     "The entry for the active alarm trapTable"
+INDEX {  trapName  }
+::=     {       trapTable    1
+        }
+
+TrapEntry    ::=  SEQUENCE   {
+                                    trapName DisplayString,
+                                    trapOid DisplayString,
+                                    trapPerceivedSeverity HpocPerceivedSeverity,
+                                    trapEventTime DisplayString,
+                                    trapTrendIndication INTEGER,
+                                    trapNotificationIdentifier DisplayString,
+                                    trapEventType HpocEventType,
+                                    trapOtherEventType DisplayString,
+                                    trapAdditionalInformation DisplayString,
+                                    trapProbableCause HpocProbableCause,
+                                    trapProposedRepairActions DisplayString,
+                                    trapCorrelatedNotifications DisplayString,
+                                    trapAdditionalText DisplayString,
+                                    trapManagedObject DisplayString,
+                                    trapI18NAlarmText DisplayString,
+                                    trapOldState INTEGER,
+                                    trapNewState INTEGER
+                             }
+
+
+trapName     OBJECT-TYPE
+SYNTAX  DisplayString
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Trap name"
+::=     {       trapEntry    1
+        }
+
+
+trapOid     OBJECT-TYPE
+SYNTAX  DisplayString
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Trap OID"
+::=     {       trapEntry    2
+        }
+
+trapPerceivedSeverity     OBJECT-TYPE
+SYNTAX  HpocPerceivedSeverity
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Trap associated severity"
+::=     {       trapEntry    3
+        }
+
+trapEventTime     OBJECT-TYPE
+SYNTAX  DisplayString
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Trap associated timestamp"
+::=     {       trapEntry    4
+        }
+
+trapTrendIndication     OBJECT-TYPE
+SYNTAX  INTEGER {
+			unknown(0),
+			notApplicable(1),
+			trendingUp(2),
+			trendingDown(3),
+			noChange(4)
+			    }
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Trap associated trend"
+::=     {       trapEntry    5
+        }
+
+trapNotificationIdentifier     OBJECT-TYPE
+SYNTAX  DisplayString
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Trap associated notification identifier"
+::=     {       trapEntry    6
+        }
+
+
+trapEventType     OBJECT-TYPE
+SYNTAX  HpocEventType
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Trap associated category"
+::=     {       trapEntry    7
+        }
+
+trapOtherEventType     OBJECT-TYPE
+SYNTAX  DisplayString
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Trap associated other category"
+::=     {       trapEntry    8
+        }
+
+
+trapAdditionalInformation     OBJECT-TYPE
+SYNTAX  DisplayString
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Trap associated additional information"
+::=     {       trapEntry    9
+        }
+
+
+trapProbableCause     OBJECT-TYPE
+SYNTAX  HpocProbableCause
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Trap associated probable cause"
+::=     {       trapEntry    10
+        }
+
+trapProposedRepairActions     OBJECT-TYPE
+SYNTAX  DisplayString
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Trap associated possible actions to apply"
+::=     {       trapEntry    11
+        }
+
+trapCorrelatedNotifications     OBJECT-TYPE
+SYNTAX  DisplayString
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Trap correlated alarms"
+::=     {       trapEntry    12
+        }
+
+trapAdditionalText     OBJECT-TYPE
+SYNTAX  DisplayString
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Trap description text"
+::=     {       trapEntry    13
+        }
+
+
+trapManagedObject     OBJECT-TYPE
+SYNTAX  DisplayString
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Trap originator OID"
+::=     {       trapEntry    14
+        }
+
+trapI18NAlarmText     OBJECT-TYPE
+SYNTAX  DisplayString
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Trap associated alarm text"
+::=     {       trapEntry    15
+        }
+
+trapOldState     OBJECT-TYPE
+SYNTAX  INTEGER
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Trap associated old state"
+::=     {       trapEntry    16
+        }
+
+trapNewState     OBJECT-TYPE
+SYNTAX  INTEGER
+MAX-ACCESS      read-only
+STATUS  current
+DESCRIPTION      "Trap associated new state"
+::=     {       trapEntry    17
+        }
+
+-- Traps
+
+notificationGroup	OBJECT IDENTIFIER
+::=	{	mrfp	1
+	}
+
+defaultNotification NOTIFICATION-TYPE
+OBJECTS {
+			perceivedSeverity,
+			eventTime,
+			trendIndication,
+			notificationIdentifier,
+			eventType,
+			otherEventType,
+			additionalInformation,
+			probableCause,
+			proposedRepairActions,
+			correlatedNotifications,
+			additionalText,
+			managedObject,
+			i18NAlarmText
+		}
+STATUS  current
+DESCRIPTION "Use to send the notifications whose trap type is not defined"
+::= {   notificationGroup  1
+	}
+
+mrfpExecutionStateChanged NOTIFICATION-TYPE
+OBJECTS {
+			perceivedSeverity,
+			eventTime,
+			trendIndication,
+			notificationIdentifier,
+			eventType,
+			otherEventType,
+			additionalInformation,
+			probableCause,
+			proposedRepairActions,
+			correlatedNotifications,
+			additionalText,
+			managedObject,
+			i18NAlarmText,
+			mrfpLocalEntityOldAssociationState,
+			mrfpLocalEntityNewAssociationState
+		}
+STATUS  current
+DESCRIPTION "State of the MRFP changed"
+::= {   notificationGroup  2
+	}
+
+
+mrfpConfigurationServerStateChanged  NOTIFICATION-TYPE
+OBJECTS {
+			perceivedSeverity,
+			eventTime,
+			trendIndication,
+			notificationIdentifier,
+			eventType,
+			otherEventType,
+			additionalInformation,
+			probableCause,
+			proposedRepairActions,
+			correlatedNotifications,
+			additionalText,
+			managedObject,
+			i18NAlarmText,
+			configurationFileName,
+			configurationOldAccessState,
+			configurationNewAccessState
+		}
+STATUS  current
+DESCRIPTION "MRFP configuration server has changed"
+::= {   notificationGroup  3
+	}
+
+mrfpConfigurationFileStateChanged  NOTIFICATION-TYPE
+OBJECTS {
+			perceivedSeverity,
+			eventTime,
+			trendIndication,
+			notificationIdentifier,
+			eventType,
+			otherEventType,
+			additionalInformation,
+			probableCause,
+			proposedRepairActions,
+			correlatedNotifications,
+			additionalText,
+			managedObject,
+			i18NAlarmText,
+			configurationFileName,
+			configurationOldContentState,
+			configurationNewContentState
+		}
+STATUS  current
+DESCRIPTION "MRFP configuration file has changed"
+::= {   notificationGroup  4
+	}
+
+
+
+mrfpQualityOfService NOTIFICATION-TYPE
+OBJECTS {
+			perceivedSeverity,
+			eventTime,
+			trendIndication,
+			notificationIdentifier,
+			eventType,
+			otherEventType,
+			additionalInformation,
+			probableCause,
+			proposedRepairActions,
+			correlatedNotifications,
+			additionalText,
+			managedObject,
+			i18NAlarmText,
+			mrfpOverloadOldState,
+			mrfpOverloadNewState
+		}
+STATUS  current
+DESCRIPTION "MRFP overload status"
+::= {   notificationGroup  5
+	}
+
+asrTtsConnectionStateChanged NOTIFICATION-TYPE
+OBJECTS {
+			perceivedSeverity,
+			eventTime,
+			trendIndication,
+			notificationIdentifier,
+			eventType,
+			otherEventType,
+			additionalInformation,
+			probableCause,
+			proposedRepairActions,
+			correlatedNotifications,
+			additionalText,
+			managedObject,
+			i18NAlarmText,
+			audioServiceServerOldState,
+			audioServiceServerNewState
+		}
+STATUS  current
+DESCRIPTION "State of the connection to the current ASR/TTS server changed"
+::= {   notificationGroup  6
+	}
+
+sdspceConnectionStateChanged NOTIFICATION-TYPE
+OBJECTS {
+			perceivedSeverity,
+			eventTime,
+			trendIndication,
+			notificationIdentifier,
+			eventType,
+			otherEventType,
+			additionalInformation,
+			probableCause,
+			proposedRepairActions,
+			correlatedNotifications,
+			additionalText,
+			managedObject,
+			i18NAlarmText,
+			sdspceConnectionOldState,
+			sdspceConnectionNewState
+		}
+STATUS  current
+DESCRIPTION "State of the connection to the current Soft DSP Conference Engine (video) server changed"
+::= {   notificationGroup  7
+	}
+
+licensingStateChanged NOTIFICATION-TYPE
+OBJECTS {
+			perceivedSeverity,
+			eventTime,
+			trendIndication,
+			notificationIdentifier,
+			eventType,
+			otherEventType,
+			additionalInformation,
+			probableCause,
+			proposedRepairActions,
+			correlatedNotifications,
+			additionalText,
+			managedObject,
+			i18NAlarmText,
+			licensingOldState,
+			licensingNewState
+		}
+STATUS  current
+DESCRIPTION "State of the Mrfp Licensing state changed"
+::= {   notificationGroup  8
+	}
+
+sdspceQualityofService NOTIFICATION-TYPE
+OBJECTS {
+			perceivedSeverity,
+			eventTime,
+			trendIndication,
+			notificationIdentifier,
+			eventType,
+			otherEventType,
+			additionalInformation,
+			probableCause,
+			proposedRepairActions,
+			correlatedNotifications,
+			additionalText,
+			managedObject,
+			i18NAlarmText,
+			sdspceOverloadOldState,
+			sdspceOverloadNewState
+		}
+STATUS  current
+DESCRIPTION "Soft DSP Conference Engine (video) overload status"
+::= {   notificationGroup  9
+	}
+
+END
+

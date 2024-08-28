@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="var" path="CURRENT_DIRECTORY/libs/AdventNetLogging.jar"/>
+	<classpathentry kind="var" path="CURRENT_DIRECTORY/libs/AdventNetSnmp.jar"/>
+	<classpathentry kind="var" path="CURRENT_DIRECTORY/libs/jfxrt.jar"/>
+	<classpathentry kind="var" path="CURRENT_DIRECTORY/libs/jxl.jar"/>
+	<classpathentry kind="output" path="target"/>
+</classpath>

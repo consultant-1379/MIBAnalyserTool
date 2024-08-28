@@ -1,0 +1,377 @@
+	HP-OPENCALL-EVENT-MIB DEFINITIONS ::= BEGIN 
+   --                                                                        --
+   -- Hewlett Packard Company                                                --
+   -- MIB Definition for the OpenCall traps                                  --
+   -- from Event Framework Common Component                                  --
+   -- this MIB complies with X.733 recommendation                            --
+   -- when particular values of some parameters do not exist in X.733,       --
+   -- comments are provided to suggest a mapping onto a X.733 existing value --
+
+   IMPORTS
+        MODULE-IDENTITY, OBJECT-TYPE, OBJECT-IDENTITY, NOTIFICATION-TYPE,
+        Integer32, enterprises
+                FROM SNMPv2-SMI
+
+        TEXTUAL-CONVENTION, DisplayString
+                FROM SNMPv2-TC
+
+        OBJECT-GROUP
+                FROM SNMPv2-CONF;
+
+-- ====================================================================== --
+-- MODULE DEFINITION                                                      --
+-- ====================================================================== --
+
+
+   hp                OBJECT IDENTIFIER ::= { enterprises 11 }
+   nm                OBJECT IDENTIFIER ::= { hp 2 }
+   inNetElem         OBJECT IDENTIFIER ::= { nm 29 }
+
+   openCall MODULE-IDENTITY
+       LAST-UPDATED "0409090000Z"
+       ORGANIZATION "Hewlett Packard Company,
+                     OpenCall Business Unit"
+       CONTACT-INFO
+              "         OpenCall Manageability
+
+                E-mail: Pdl-ocbuM-CC-manageability-team@hp.com "
+       DESCRIPTION
+                ""
+       REVISION     "0409090000Z"
+       DESCRIPTION
+               "This is the MIB module that describes an HP private mib
+                for the management of OpenCall traps. "
+       ::= { inNetElem 2 }
+
+
+-- ====================================================================== --
+-- TEXTUAL CONVENTIONS                                                    --
+--                                                                        --
+-- textual conventions are prefixed with hpoc                             --
+-- ====================================================================== --
+
+
+HpocEventType ::= TEXTUAL-CONVENTION
+                STATUS current 
+                DESCRIPTION 
+                       "Event type as specified in ITU recommendations
+                        plus ModelChange and Security Alarm coming from DMTF
+                        CIM model.
+                        X.733 mapping: modelChange onto communicationAlarms
+                                       securityAlarm onto communicationAlarms"
+                SYNTAX INTEGER {
+                        other(1), 
+                        communicationsAlarm(2), 
+                        qualityofServiceAlarm(3),
+                        processingErrorAlarm(4),
+                        equipmentAlarm(5), 
+                        environmentalAlarm(6),
+                        modelChange(7), 
+                        securityAlarm(8)} 
+
+HpocPerceivedSeverity ::= TEXTUAL-CONVENTION
+                        STATUS current 
+                        DESCRIPTION 
+                        "Perceived severity defines the severity level of the fault
+                        An alarm notification must not use the value cleared.
+                        A clear alarm notification must use the value cleared.
+                        recommendation X.733. The value indeterminate(0)
+                        is not recommended to be used.
+                        X.733 mapping: other       onto indeterminate
+                                       information onto indeterminate
+                                       fatal       onto critical"
+                        SYNTAX INTEGER { 
+                                indeterminate(0), 
+                                other(1), 
+                                information(2), 
+                                warning(3), 
+                                minor(4), 
+                                major(5), 
+                                critical(6), 
+                                fatal(7), 
+                                cleared(8)} 
+
+HpocProbableCause ::= TEXTUAL-CONVENTION
+                      STATUS current 
+                      DESCRIPTION 
+                        "Probable cause is used to qualify the probable caus
+                        of the alarm in a Network Element. It provides
+                        further information than the event type.
+                        X733 mapping: all values which are not existing in X.733
+                        should be mapped onto softwareError
+                        field additionalInformation gives an accurate probableCause"
+                      SYNTAX INTEGER {
+                        unknown(0),
+                        other(1),
+                        adapterError(2),
+                        applicationSubsystemFailure(3),
+                        bandwidthReduced(4),
+                        callEstablishmentError(5),
+                        communicationsProtocolError(6),
+                        communicationsSubsystemFailure(7),
+                        configurationOrCustomizationError(8),
+                        congestion(9),
+                        corruptData(10),
+                        cpuCyclesLimitExceeded(11),
+                        datasetOrModemError(12),
+                        degradedSignal(13),
+                        dTE-DCEInterfaceError(14),
+                        enclosureDoorOpen(15),
+                        equipmentMalfunction(16),
+                        excessiveVibration(17),
+                        fileError(18),
+                        fireDetected(19),
+                        floodDetected(20),
+                        framingError(21),
+                        heatingOrVentilationOrCoolingSystemProblem(22),
+                        humidityUnacceptable(23),
+                        inputOutputDeviceError(24),
+                        inputDeviceError(25),
+                        lANError(26),
+                        nonToxicLeakDetected(27),
+                        localNodeTransmissionError(28),
+                        lossOfFrame(29),
+                        lossOfSignal(30),
+                        materialSupplyExhausted(31),
+                        multiplexerProblem(32),
+                        outOfMemory(33),
+                        outputDeviceError(34),
+                        performanceDegraded(35),
+                        powerProblem(36),
+                        pressureUnacceptable(37),
+                        processorProblem(38),
+                        pumpFailure(39),
+                        queueSizeExceeded(40),
+                        receiveFailure(41),
+                        receiverFailure(42),
+                        remoteNodeTransmissionError(43),
+                        resourceAtOrNearingCapacity(44),
+                        responseTimeExcessive(45),
+                        retransmissionRateExcessive(46),
+                        sofwareError(47),
+                        sofwareProgramAbnormallyTerminated(48),
+                        softwareProgramError(49),
+                        storageCapacityProblem(50),
+                        temperatureUnacceptable(51),
+                        thresholdCrossed(52),
+                        timingProblem(53),
+                        toxicLeakDetected(54),
+                        transmitFailure(55),
+                        transmitterFailure(56),
+                        underlyingResourceUnavailable(57),
+                        versionMismatch(58),
+                        previousAlertCleared(59),
+                        loginAttemptsFailed(60),
+                        softwareVirus(61),
+                        hardwareSecurityBreached(62),
+                        denialOfService(63),
+                        securityCredentialMisMatch(64),
+                        unauthorizedAccess(65),
+                        alarmReceived(66),
+                        lossOfPointer(67), 
+                        payloadMismatch(68),
+                        transmissionError(69),
+                        excessiveErrorRate(70),
+                        traceProblem(71),
+                        elementUnavailable(72),
+                        elementMissing(73), 
+                        lossOfMultiFrame(74),
+                        broadcastChannelFailure(75), 
+                        invalidMessageReceived(76),
+                        routingFailure(77),
+                        backplaneFailure(78), 
+                        identifierDuplication(79),
+                        protectionPathFailure(80),
+                        syncLoss(81),
+                        terminalProblem(82),
+                        realTimeClockFailure(83),
+                        antennaFailure(84),
+                        batteryChargingFailure(85),
+                        diskFailure(86),
+                        frequencyHoppingFailure(87), 
+                        lossOfRedundancy(88),
+                        powerSupplyFailure(89),
+                        signalQualityProblem(90),
+                        batteryDischarging(91),
+                        batteryFailure(92),
+                        commercialPowerProblem(93), 
+                        fanFailure(94),   
+                        engineFailure(95),
+                        sensorFailure(96),
+                        fuseFailure(97),
+                        generatorFailure(98),
+                        lowBattery(99),
+                        lowFuel(100),
+                        lowWater(101),
+                        explosiveGas(102),
+                        highWinds(103),
+                        iceBuildup(104),
+                        smoke(105),
+                        memoryMismatch(106),
+                        outOfCPUCycles(107),
+                        softwareEnvProblem(108),
+                        softwareDownloadFailure(109),
+                        elementReinitialized(110),
+                        timeout(111),
+                        loggingProblems(112),
+                        leakDetected(113),
+                        protectionMechanismFailure(114)}
+                        
+-- ========================================================== --
+-- First level tree                                           --
+-- ========================================================== --
+
+   ocEventTraps     OBJECT IDENTIFIER ::= { openCall 10 }
+
+-- ========================================================== --
+-- Second level tree                                          --
+-- ========================================================== --
+
+-- Traps variables ========================================== --
+-- Trap: (eventType, otherEventType, eventTime, eventInfo) --
+
+--   perceivedSeverity          OBJECT IDENTIFIER ::= { ocEventTraps 1 } --
+--   eventTime                  OBJECT IDENTIFIER ::= { ocEventTraps 2 } --
+--   trendIndication            OBJECT IDENTIFIER ::= { ocEventTraps 3 } --
+--   notificationIdentifier     OBJECT IDENTIFIER ::= { ocEventTraps 4 } --
+--   eventType                  OBJECT IDENTIFIER ::= { ocEventTraps 5 } --
+--   otherEventType             OBJECT IDENTIFIER ::= { ocEventTraps 6 } --
+--   additionalInformation      OBJECT IDENTIFIER ::= { ocEventTraps 7 } --
+--   probableCause              OBJECT IDENTIFIER ::= { ocEventTraps 8 } --
+--   proposedRepairActions      OBJECT IDENTIFIER ::= { ocEventTraps 9 } --
+--   correlatedNotifications    OBJECT IDENTIFIER ::= { ocEventTraps 10 } --
+--   additionalText             OBJECT IDENTIFIER ::= { ocEventTraps 11 } --
+--   managedObject              OBJECT IDENTIFIER ::= { ocEventTraps 12 } --
+--   i18NAlarmText              OBJECT IDENTIFIER ::= { ocEventTraps 13 } --
+
+
+   perceivedSeverity OBJECT-TYPE
+       SYNTAX     HpocPerceivedSeverity
+       MAX-ACCESS read-only
+       STATUS     current 
+       DESCRIPTION
+               " This identifies the severity of the trap."
+       ::= { ocEventTraps 1 }
+
+   eventTime OBJECT-TYPE
+       SYNTAX     DisplayString
+       MAX-ACCESS read-only
+       STATUS     current
+       DESCRIPTION
+               " timestamp for the event "
+       ::= { ocEventTraps 2 }
+        
+   trendIndication OBJECT-TYPE
+       SYNTAX     INTEGER {
+                                unknown(0),
+                                notApplicable(1), 
+                                trendingUp(2), 
+                                trendingDown(3),
+                                noChange(4)
+                          }
+
+       MAX-ACCESS read-only
+       STATUS     current
+       DESCRIPTION
+               " This parameter, when present, specifies the current severity trend of the managed object "
+       ::= { ocEventTraps 3 }
+
+
+
+   notificationIdentifier OBJECT-TYPE
+       SYNTAX     DisplayString
+       MAX-ACCESS read-only
+       STATUS     current
+       DESCRIPTION
+               " This parameter, when present, provides an identifier
+        for the notification, which may be carried in the Correlated
+        notifications parameter (see below) of future notifications.
+        Notification identifiers must be chosen to be unique
+        across all notifications of a particular managed object throughout
+        the time that correlation is significant."
+       ::= { ocEventTraps 4 }
+
+   eventType OBJECT-TYPE
+       SYNTAX     HpocEventType 
+       MAX-ACCESS read-only
+       STATUS     current
+       DESCRIPTION
+               " category of the alarm "
+	::= { ocEventTraps 5 }
+
+   otherEventType OBJECT-TYPE
+       SYNTAX     DisplayString
+       MAX-ACCESS read-only
+       STATUS     current
+       DESCRIPTION
+               " This parameter must be used when eventType
+        parameter value has been set to 1 (other) "
+       ::= { ocEventTraps 6 }
+
+   additionalInformation OBJECT-TYPE
+       SYNTAX     DisplayString
+       MAX-ACCESS read-only
+       STATUS     current
+       DESCRIPTION
+               "This parameter is the X.733 equivalent
+                of probableCauseDescription in DMTF CIM"
+       ::= { ocEventTraps 7 }
+
+   probableCause OBJECT-TYPE
+       SYNTAX     HpocProbableCause
+       MAX-ACCESS read-only
+       STATUS     current
+       DESCRIPTION
+               " This identifies the probable cause of the trap."
+       ::= { ocEventTraps 8 }
+
+   proposedRepairActions OBJECT-TYPE
+       SYNTAX     DisplayString
+       MAX-ACCESS read-only
+       STATUS     current
+       DESCRIPTION
+               " This describes the actions to apply for correcting the
+               problem that generated this alarm."
+       ::= { ocEventTraps 9 }
+
+   correlatedNotifications OBJECT-TYPE
+       SYNTAX     DisplayString
+       MAX-ACCESS read-only
+       STATUS     current
+       DESCRIPTION
+               " This parameter, when present, contains a set of
+        Notification identifiers and, if necessary, their associated
+        managed object instance names.  This set is defined to be
+        the set of all notifications to which this
+                notification is considered to be correlated"
+       ::= { ocEventTraps 10 }
+
+
+   additionalText OBJECT-TYPE
+       SYNTAX     DisplayString
+       MAX-ACCESS read-only
+       STATUS     current
+       DESCRIPTION
+               " This describes the alarm generating the trap."
+       ::= { ocEventTraps 11 }
+
+   managedObject OBJECT-TYPE
+       SYNTAX     DisplayString
+       MAX-ACCESS read-only
+       STATUS     current
+       DESCRIPTION
+               "This parameter is the X.733 equivalent
+                                of AlertingManagedElement in DMTF CIM.
+                This This describes the originator of the alarm."
+       ::= { ocEventTraps 12 }
+
+   i18NAlarmText OBJECT-TYPE
+       SYNTAX     DisplayString
+       MAX-ACCESS read-only
+       STATUS     current
+       DESCRIPTION
+               "A Detailed description of the AlarmText."
+       ::= { ocEventTraps 13 }
+
+	
+    END

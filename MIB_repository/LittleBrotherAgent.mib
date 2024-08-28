@@ -1,0 +1,251 @@
+MRFPCLUSTER-MIB	DEFINITIONS ::= BEGIN
+-- Hewlett Packard Company
+-- HP Extensible MIB Definition for the mrfpClusterModule Platform SNMP Agent
+-- June-2009
+-- MRFP Cluster MIB Version 1.2
+
+
+	IMPORTS
+		enterprises, MODULE-IDENTITY, OBJECT-TYPE, NOTIFICATION-TYPE, TimeTicks,
+		IpAddress, Gauge32, Counter32, Counter64
+			FROM SNMPv2-SMI
+		MacAddress, TimeInterval, TruthValue, TestAndIncr,
+		RowStatus, DisplayString, StorageType, DateAndTime, TEXTUAL-CONVENTION
+			FROM SNMPv2-TC
+		IpAddress
+			FROM RFC1155-SMI
+		DisplayString
+			FROM RFC1213-MIB
+		openCall,
+		ocEventTraps,
+		HpocEventType, HpocPerceivedSeverity, HpocProbableCause, 
+		perceivedSeverity, 
+		eventTime,
+		trendIndication,
+		notificationIdentifier,
+		eventType,                  
+		otherEventType,             
+		additionalInformation,      
+		probableCause,              
+		proposedRepairActions,      
+		correlatedNotifications,
+		additionalText,            
+		managedObject,
+		i18NAlarmText
+			FROM HP-OPENCALL-EVENT-MIB;			
+
+mrfpClusterModule	MODULE-IDENTITY
+LAST-UPDATED	"200906051442Z"
+ORGANIZATION	"Hewlett Packard Company, OpenCall Business Unit"
+CONTACT-INFO	"email:cpelab_ocmp@tidweb.gre.hp.com"
+DESCRIPTION		"SNMP MIB for Mrfp Cluster Agent "
+REVISION		"200906051442Z"
+DESCRIPTION	"Copyright 2006 Hewlett-Packard Development Company, L.P. The HP private MIB module for management of the Mrfp cluster in OpenCall product family"
+::=     {       media     2
+         }
+
+hp      OBJECT IDENTIFIER
+::=     {       enterprises      11
+	 }
+	 
+nm      OBJECT IDENTIFIER
+::=     {       hp      2
+        }
+
+inNetElem      OBJECT IDENTIFIER
+::=     {       nm      29
+        }
+
+openCall      OBJECT IDENTIFIER
+::=     {       inNetElem      2
+        }
+
+media      OBJECT IDENTIFIER
+::=     {       openCall      7
+        }
+
+mrfpCluster	OBJECT IDENTIFIER
+::=	{	mrfpClusterModule	2
+	}
+
+-- ======================================================================================================================================
+-- MIB Structure
+-- ======================================================================================================================================
+-- .1.3.6.1.4.1
+--            hp .11
+--                 nm .2
+--                     inNetElem .29
+--                                 openCall .2
+--                                           media .7
+--                                                  mrfp .1
+--                                                  mrfpClusterModule .2
+--                                                                     mrfpCluster .1 : cluster name
+--                                                                     mrfpCluster .2 : cluster centralized configuration url
+--                                                                     mrfpCluster .3 : cluster node table
+-- ======================================================================================================================================
+
+
+mrfpClusterClusterName	OBJECT-TYPE
+SYNTAX	DisplayString
+MAX-ACCESS	read-write
+STATUS	current
+DESCRIPTION	 "Mrfp cluster name"
+::=	{	mrfpCluster	1
+	}
+
+mrfpClusterConfigUrls	OBJECT-TYPE
+SYNTAX	DisplayString
+MAX-ACCESS	read-write
+STATUS	current
+DESCRIPTION	 "Mrfp configuration Urls used to retrieve configuration files"
+::=	{	mrfpCluster	2
+	}
+
+--------------------------
+-- Mrfp Cluster Node table
+--------------------------
+
+mrfpClusterNodeTable	OBJECT-TYPE
+SYNTAX	SEQUENCE OF	MrfpClusterNodeEntry
+MAX-ACCESS	not-accessible
+STATUS	current
+DESCRIPTION	"Table of Mrfp nodes"
+::=	{	mrfpClusterModule	3
+	}
+
+
+mrfpClusterNodeEntry	OBJECT-TYPE
+SYNTAX	MrfpClusterNodeEntry
+MAX-ACCESS	not-accessible
+STATUS	current
+DESCRIPTION	"The entry for the Mrfp cluster node table"
+INDEX {  mrfpClusterNodeName  }
+::=	{	mrfpClusterNodeTable	1
+	}
+	
+
+MrfpClusterNodeEntry	::=  SEQUENCE	{ 
+					  mrfpClusterNodeName          			DisplayString,
+                                          mrfpClusterNodeApplication   			DisplayString,
+                                          mrfpClusterNodeOperOldState  			DisplayString,
+                                          mrfpClusterNodeOperNewState  			DisplayString,
+                                          mrfpClusterNodeAdminState    			DisplayString,
+					  mrfpClusterNodeHeartBeatAddress		DisplayString,
+					  mrfpClusterNodeHeartBeatBroadcastAddress	DisplayString
+                                        }
+
+mrfpClusterNodeName	OBJECT-TYPE
+SYNTAX	DisplayString
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Mrfp node name"
+::=	{	mrfpClusterNodeEntry	1
+	}
+
+mrfpClusterNodeApplication	OBJECT-TYPE
+SYNTAX	DisplayString
+MAX-ACCESS	read-write
+STATUS	current
+DESCRIPTION	 "Mrfp node application name"
+::=	{	mrfpClusterNodeEntry	2
+	}
+
+mrfpClusterNodeOperOldState	OBJECT-TYPE
+SYNTAX	DisplayString
+MAX-ACCESS	accessible-for-notify
+STATUS	current
+DESCRIPTION	 "Mrfp node old operational state. Possible states are:
+               - down     : Current node application is stopped
+               - up       : Current node application is up and running
+               - stopping : Current node application is the process of being stopped
+               - dead     : Current node application is in an invalid state
+               - unknown  : Current node application is not defined"
+::=	{	mrfpClusterNodeEntry	3
+	}
+
+mrfpClusterNodeOperNewState	OBJECT-TYPE
+SYNTAX	DisplayString
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Mrfp node new operational state. Possible states are:
+               - down     : Current node application is stopped
+               - up       : Current node application is up and running
+               - stopping : Current node application is the process of being stopped
+               - dead     : Current node application is in an invalid state
+               - unknown  : Current node application is not defined"
+::=	{	mrfpClusterNodeEntry	4
+	}
+
+mrfpClusterNodeAdminState	OBJECT-TYPE
+SYNTAX	DisplayString
+MAX-ACCESS	read-write
+STATUS	current
+DESCRIPTION	 "Mrfp node administration state. Possible states are:
+               - down     : Current node application is stopped
+               - up       : Current node application is up and running
+               - stopping : Current node application is the process of being stopped"
+::=	{	mrfpClusterNodeEntry	5
+	}
+
+
+--------------------------
+-- Mrfp Cluster HeartBeat
+--------------------------
+
+mrfpClusterNodeHeartBeatAddress	OBJECT-TYPE
+SYNTAX	DisplayString
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Mrfp Interface and port used for cluster heartbeat"
+::=	{	mrfpClusterNodeEntry	6
+	}
+
+mrfpClusterNodeHeartBeatBroadcastAddress	OBJECT-TYPE
+SYNTAX	DisplayString
+MAX-ACCESS	read-only
+STATUS	current
+DESCRIPTION	 "Mrfp broadcast address used for cluster heartbeat"
+::=	{	mrfpClusterNodeEntry	7
+	}
+
+-- =====================================================================================================================================
+-- trap definition (coming from a OC products standard trap events )
+-- =====================================================================================================================================
+
+notificationGroup	OBJECT IDENTIFIER
+::=	{	mrfpClusterModule	1
+	}
+
+defaultNotification NOTIFICATION-TYPE
+STATUS  current
+DESCRIPTION "Use to send the notifications whose trap type is not defined"
+::= {   notificationGroup  1
+	}
+
+mrfpClusterStateChange NOTIFICATION-TYPE
+OBJECTS { 	perceivedSeverity,
+			eventTime,
+			trendIndication,
+			notificationIdentifier,
+			eventType,
+			otherEventType,
+			additionalInformation,
+			probableCause,
+			proposedRepairActions,
+			correlatedNotifications,
+			additionalText,
+			managedObject,
+			i18NAlarmText,
+			mrfpClusterNodeName,
+			mrfpClusterNodeApplication,
+			mrfpClusterNodeOperOldState,
+			mrfpClusterNodeOperNewState,
+			mrfpClusterNodeAdminState 
+}
+STATUS  current
+DESCRIPTION "State of an application has changed in the Mrfp cluster"
+::= {   notificationGroup  2
+        }
+
+END
+
